@@ -26,10 +26,11 @@ export const ContentWrapperSection = (): JSX.Element => {
     return () => window.removeEventListener("resize", onR);
   }, []);
 
-  // ile kart widzimy na raz
+  // ile kart widać naraz
   const VISIBLE = vw >= 1280 ? 4 : vw >= 1024 ? 3 : vw >= 768 ? 2 : 1;
   const GAP_PX = vw < 768 ? 16 : 20;
   const CARD_W = 280;
+
   const laneWidth = VISIBLE * CARD_W + (VISIBLE - 1) * GAP_PX;
 
   const [index, setIndex] = useState(0);
@@ -47,7 +48,11 @@ export const ContentWrapperSection = (): JSX.Element => {
   // pozycje pionowe
   const topCards = vw < 640 ? 140 : vw < 1024 ? 170 : 191;
   const topGlow = vw < 640 ? 220 : 300;
-  const topBar = topGlow + 34; // pasek z kropkami/licznikiem
+  const topBar = topGlow + 34; // pasek kropek/licznika
+
+  // odsunięcie strzałek od toru kart (tak by nigdy nie nachodziły)
+  const arrowOffset =
+    vw >= 1280 ? 72 : vw >= 1024 ? 56 : 44; // xl / lg / md
 
   return (
     <section className="w-full h-[350px] sm:h-[400px] lg:h-[431px] relative">
@@ -113,35 +118,35 @@ export const ContentWrapperSection = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Strzałki — desktop (>=1280px), odsunięte od kart */}
+      {/* Strzałki — tablet/desktop (>= md) */}
       <Button
         variant="outline"
         size="icon"
-        className="hidden xl:inline-flex absolute w-11 h-11 border-2 border-[#0F5575] rounded-[5px]"
+        className="hidden md:inline-flex absolute w-10 h-10 lg:w-11 lg:h-11 border-2 border-[#0F5575] rounded-[5px]"
         style={{
           top: `${topCards + 40}px`,
-          left: `calc(50% - ${laneWidth / 2}px - 72px)`,
+          left: `calc(50% - ${laneWidth / 2}px - ${arrowOffset}px)`,
         }}
         aria-label="Poprzednie"
         onClick={goPrev}
       >
-        <ChevronLeftIcon className="w-6 h-6" />
+        <ChevronLeftIcon className="w-5 h-5 lg:w-6 lg:h-6" />
       </Button>
       <Button
         variant="outline"
         size="icon"
-        className="hidden xl:inline-flex absolute w-11 h-11 border-2 border-[#0F5575] rounded-[5px]"
+        className="hidden md:inline-flex absolute w-10 h-10 lg:w-11 lg:h-11 border-2 border-[#0F5575] rounded-[5px]"
         style={{
           top: `${topCards + 40}px`,
-          right: `calc(50% - ${laneWidth / 2}px - 72px)`,
+          right: `calc(50% - ${laneWidth / 2}px - ${arrowOffset}px)`,
         }}
         aria-label="Następne"
         onClick={goNext}
       >
-        <ChevronRightIcon className="w-6 h-6" />
+        <ChevronRightIcon className="w-5 h-5 lg:w-6 lg:h-6" />
       </Button>
 
-      {/* Pasek (kropki + licznik) — DESKTOP/TABLET */}
+      {/* Pasek (kropki + licznik) — tablet/desktop */}
       <div
         className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-3"
         style={{ top: `${topBar}px` }}
@@ -164,7 +169,7 @@ export const ContentWrapperSection = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Sterowanie — MOBILE: strzałki + pasek między nimi */}
+      {/* Sterowanie — MOBILE (strzałki + pasek między nimi) */}
       <div
         className="md:hidden absolute left-1/2 -translate-x-1/2 w-[min(360px,100%)] px-2 flex items-center justify-between"
         style={{ top: `${topBar}px` }}
