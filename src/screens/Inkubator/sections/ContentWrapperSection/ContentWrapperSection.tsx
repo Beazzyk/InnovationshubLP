@@ -17,20 +17,27 @@ export const ContentWrapperSection = (): JSX.Element => {
     []
   );
 
-  const [isMobile, setIsMobile] = React.useState(false);
+  // ——— Breakpointy do sterowania ilością kart ———
+  const [vw, setVw] = useState<number>(typeof window !== "undefined" ? window.innerWidth : 1920);
   React.useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+    const onR = () => setVw(window.innerWidth);
+    onR();
+    window.addEventListener("resize", onR);
+    return () => window.removeEventListener("resize", onR);
   }, []);
 
-  const VISIBLE = isMobile ? 1 : 4;
-  const GAP_PX = isMobile ? 16 : 20;
+  // Liczba kart na ekranie na podstawie szerokości okna
+  const VISIBLE = vw >= 1280 ? 4 : vw >= 1024 ? 3 : vw >= 768 ? 2 : 1;
+  const GAP_PX = vw < 768 ? 16 : 20;
+  const CARD_W = 280;
+
+  // Szerokość toru = ile faktycznie mieści się kart + odstępy
+  const laneWidth = VISIBLE * CARD_W + (VISIBLE - 1) * GAP_PX;
 
   const [index, setIndex] = useState(0);
   const total = companies.length;
 
+  // Widoczne karty (pętla)
   const visible = useMemo(() => {
     const out: typeof companies = [];
     for (let i = 0; i < VISIBLE; i++) out.push(companies[(index + i) % total]);
@@ -39,6 +46,10 @@ export const ContentWrapperSection = (): JSX.Element => {
 
   const goNext = () => setIndex((i) => (i + 1) % total);
   const goPrev = () => setIndex((i) => (i - 1 + total) % total);
+
+  // Pozycje pionowe elementów (różne dla mobile/tablet/desktop)
+  const topCards = vw < 640 ? 140 : vw < 1024 ? 170 : 191;
+  const topGlow = vw < 640 ? 220 : 300;
 
   return (
     <section className="w-full h-[350px] sm:h-[400px] lg:h-[431px] relative">
@@ -56,14 +67,14 @@ export const ContentWrapperSection = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Poświata */}
+      {/* Poświata pod kartami */}
       <svg
         className="pointer-events-none absolute z-0 left-1/2 -translate-x-1/2"
-        width={isMobile ? 300 : 1180}
+        width={laneWidth}
         height="58"
-        viewBox={`0 0 ${isMobile ? 300 : 1180} 58`}
+        viewBox={`0 0 ${laneWidth} 58`}
         fill="none"
-        style={{ top: isMobile ? "220px" : "300px" }}
+        style={{ top: `${topGlow}px` }}
         aria-hidden="true"
       >
         <defs>
@@ -72,23 +83,23 @@ export const ContentWrapperSection = (): JSX.Element => {
             <stop offset="45%" stopColor="#4EBFEE" stopOpacity="0.10" />
             <stop offset="100%" stopColor="#4EBFEE" stopOpacity="0.00" />
           </radialGradient>
-          <linearGradient id="sideFade" x1="0" y1="0" x2="1180" y2="0">
+          <linearGradient id="sideFade" x1="0" y1="0" x2={laneWidth} y2="0">
             <stop offset="0" stopColor="black" stopOpacity="0" />
             <stop offset="0.08" stopColor="black" stopOpacity="1" />
             <stop offset="0.92" stopColor="black" stopOpacity="1" />
             <stop offset="1" stopColor="black" stopOpacity="0" />
           </linearGradient>
-          <mask id="softSides" x="0" y="0" width={isMobile ? 300 : 1180} height="58">
-            <rect x="0" y="0" width={isMobile ? 300 : 1180} height="58" fill="url(#sideFade)" />
+          <mask id="softSides" x="0" y="0" width={laneWidth} height="58">
+            <rect x="0" y="0" width={laneWidth} height="58" fill="url(#sideFade)" />
           </mask>
         </defs>
-        <rect x="0" y="0" width={isMobile ? 300 : 1180} height="58" rx="28" fill="url(#glow)" mask="url(#softSides)" />
+        <rect x="0" y="0" width={laneWidth} height="58" rx="28" fill="url(#glow)" mask="url(#softSides)" />
       </svg>
 
-      {/* Karty */}
+      {/* Karty – tor ma szerokość zależną od VISIBLE, więc nic nie ucieka */}
       <div
-        className="relative z-10 absolute top-[140px] sm:top-[170px] lg:top-[191px] left-1/2 -translate-x-1/2 flex justify-center"
-        style={{ width: isMobile ? 300 : 1180, height: 124 }}
+        className="relative z-10 absolute left-1/2 -translate-x-1/2 flex justify-center"
+        style={{ width: laneWidth, height: 124, top: `${topCards}px` }}
       >
         <div className="flex" style={{ gap: GAP_PX }}>
           {visible.map((logo) => (
@@ -104,8 +115,9 @@ export const ContentWrapperSection = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Kropki + licznik — DESKTOP/TABLET */}
-      <div className="hidden md:inline-flex items-center gap-3 absolute top-[320px] lg:top-[355px] left-1/2 -translate-x-1/2">
+      {/* Kropki + licznik — DESKTOP/TABLET (do 1279px ukrywamy strzałki boczne) */}
+      <div className="hidden md:inline-flex items-center gap-3 absolute left-1/2 -translate-x-1/2"
+           style={{ top: `${topGlow + 20}px` }}>
         <div className="flex items-center gap-2">
           {companies.map((_, i) => {
             const active = i === index;
@@ -125,28 +137,35 @@ export const ContentWrapperSection = (): JSX.Element => {
         </div>
       </div>
 
-      {/* STRZAŁKI — DESKTOP */}
+      {/* STRZAŁKI — tylko na bardzo szerokich ekranach (≥1280px),
+          aby nigdy nie nachodziły na karty */}
       <Button
         variant="outline"
         size="icon"
-        className="hidden md:inline-flex absolute top-[210px] lg:top-[231px] left-8 lg:left-[77px] w-10 h-10 lg:w-11 lg:h-11 border-2 border-[#0F5575] rounded-[5px]"
+        className="hidden xl:inline-flex absolute w-11 h-11 border-2 border-[#0F5575] rounded-[5px]"
+        style={{ top: `${topCards + 40}px`, left: `calc(50% - ${laneWidth / 2}px - 24px)` }}
         aria-label="Poprzednie"
         onClick={goPrev}
       >
-        <ChevronLeftIcon className="w-5 h-5 lg:w-6 lg:h-6" />
+        <ChevronLeftIcon className="w-6 h-6" />
       </Button>
       <Button
         variant="outline"
         size="icon"
-        className="hidden md:inline-flex absolute top-[210px] lg:top-[231px] right-8 lg:right-[77px] w-10 h-10 lg:w-11 lg:h-11 border-2 border-[#0F5575] rounded-[5px]"
+        className="hidden xl:inline-flex absolute w-11 h-11 border-2 border-[#0F5575] rounded-[5px]"
+        style={{ top: `${topCards + 40}px`, right: `calc(50% - ${laneWidth / 2}px - 24px)` }}
         aria-label="Następne"
         onClick={goNext}
       >
-        <ChevronRightIcon className="w-5 h-5 lg:w-6 lg:h-6" />
+        <ChevronRightIcon className="w-6 h-6" />
       </Button>
 
-      {/* STEROWANIE — MOBILE: niżej + licznik między strzałkami */}
-      <div className="md:hidden absolute left-1/2 -translate-x-1/2 top-[300px] w-[300px] px-2 flex items-center justify-between">
+      {/* STEROWANIE — MOBILE/TABLET (do 1279px): strzałki pod kartami,
+          więc nie ma ryzyka kolizji z kartami */}
+      <div
+        className="xl:hidden absolute left-1/2 -translate-x-1/2 w-[min(300px,100%)] px-2 flex items-center justify-between"
+        style={{ top: `${topGlow + 10 + 24}px` }}
+      >
         <Button
           variant="outline"
           size="icon"
@@ -157,7 +176,6 @@ export const ContentWrapperSection = (): JSX.Element => {
           <ChevronLeftIcon className="w-4 h-4" />
         </Button>
 
-        {/* środek: kropki + licznik w jednej belce */}
         <div className="flex flex-col items-center gap-1">
           <div className="flex items-center gap-2">
             {companies.map((_, i) => {
