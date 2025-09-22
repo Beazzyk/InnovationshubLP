@@ -17,7 +17,7 @@ export const ContentWrapperSection = (): JSX.Element => {
     []
   );
 
-  // szerokość okna (potrzebna do warunkowego layoutu)
+  // szerokość okna → sterowanie układem
   const [vw, setVw] = useState<number>(
     typeof window !== "undefined" ? window.innerWidth : 1920
   );
@@ -27,7 +27,7 @@ export const ContentWrapperSection = (): JSX.Element => {
     return () => window.removeEventListener("resize", onR);
   }, []);
 
-  // ile kart widzimy jednocześnie
+  // ile kart wyświetlamy
   const VISIBLE = vw >= 1280 ? 4 : vw >= 1024 ? 3 : vw >= 768 ? 2 : 1;
   const GAP_PX = vw < 768 ? 16 : 20;
   const CARD_W = 280;
@@ -36,7 +36,7 @@ export const ContentWrapperSection = (): JSX.Element => {
   const [index, setIndex] = useState(0);
   const total = companies.length;
 
-  // widoczne elementy (z zawijaniem modulo)
+  // widoczne elementy (zawijane modulo)
   const visible = useMemo(() => {
     const out: typeof companies = [];
     for (let i = 0; i < VISIBLE; i++) out.push(companies[(index + i) % total]);
@@ -46,7 +46,7 @@ export const ContentWrapperSection = (): JSX.Element => {
   const goNext = () => setIndex((i) => (i + 1) % total);
   const goPrev = () => setIndex((i) => (i - 1 + total) % total);
 
-  // pozycje pionowe zależne od breakpointów
+  // pozycje pionowe
   const topCards = vw < 640 ? 140 : vw < 1024 ? 170 : 191;
   const topGlow = vw < 640 ? 220 : 300;
 
@@ -92,15 +92,7 @@ export const ContentWrapperSection = (): JSX.Element => {
             <rect x="0" y="0" width={laneWidth} height="58" fill="url(#sideFade)" />
           </mask>
         </defs>
-        <rect
-          x="0"
-          y="0"
-          width={laneWidth}
-          height="58"
-          rx="28"
-          fill="url(#glow)"
-          mask="url(#softSides)"
-        />
+        <rect x="0" y="0" width={laneWidth} height="58" rx="28" fill="url(#glow)" mask="url(#softSides)" />
       </svg>
 
       {/* Rząd kart */}
@@ -115,26 +107,21 @@ export const ContentWrapperSection = (): JSX.Element => {
               className="w-[280px] bg-white rounded-2xl border border-[#F5FAFD] shadow-card-shadow cursor-pointer transition-transform hover:-translate-y-[2px]"
             >
               <CardContent className="flex flex-col items-start gap-1 p-4">
-                <img
-                  className="w-full h-[100px] object-contain"
-                  alt={logo.alt}
-                  src={logo.src}
-                  loading="lazy"
-                />
+                <img className="w-full h-[100px] object-contain" alt={logo.alt} src={logo.src} loading="lazy" />
               </CardContent>
             </Card>
           ))}
         </div>
       </div>
 
-      {/* Strzałki boczne – tylko ≥1280px; odsunięte od toru o 40px */}
+      {/* Strzałki boczne — desktop (>=1280px) // odsunięte o 72px poza tor */}
       <Button
         variant="outline"
         size="icon"
         className="hidden xl:inline-flex absolute w-11 h-11 border-2 border-[#0F5575] rounded-[5px]"
         style={{
           top: `${topCards + 40}px`,
-          left: `calc(50% - ${laneWidth / 2}px - 40px)`,
+          left: `calc(50% - ${laneWidth / 2}px - 72px)`,
         }}
         aria-label="Poprzednie"
         onClick={goPrev}
@@ -148,7 +135,7 @@ export const ContentWrapperSection = (): JSX.Element => {
         className="hidden xl:inline-flex absolute w-11 h-11 border-2 border-[#0F5575] rounded-[5px]"
         style={{
           top: `${topCards + 40}px`,
-          right: `calc(50% - ${laneWidth / 2}px - 40px)`,
+          right: `calc(50% - ${laneWidth / 2}px - 72px)`,
         }}
         aria-label="Następne"
         onClick={goNext}
@@ -156,7 +143,15 @@ export const ContentWrapperSection = (): JSX.Element => {
         <ChevronRightIcon className="w-6 h-6" />
       </Button>
 
-      {/* Sterowanie mobile/tablet – JEDYNY wskaźnik (kropki + licznik) */}
+      {/* Licznik — tylko desktop (pojedynczy licznik, bez kropek) */}
+      <div
+        className="hidden xl:flex absolute left-1/2 -translate-x-1/2 font-raleway-14-semibold text-ui-dark-blue text-sm"
+        style={{ top: `${topGlow + 34}px` }}
+      >
+        {index + 1}/{total}
+      </div>
+
+      {/* Sterowanie mobile/tablet — JEDYNY wskaźnik (kropki + licznik) */}
       <div
         className="xl:hidden absolute left-1/2 -translate-x-1/2 w-[min(360px,100%)] px-2 flex items-center justify-between"
         style={{ top: `${topGlow + 34}px` }}
