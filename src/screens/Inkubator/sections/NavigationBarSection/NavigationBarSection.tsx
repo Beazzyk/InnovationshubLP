@@ -1,4 +1,3 @@
-import { ChevronDownIcon } from "lucide-react";
 import React from "react";
 import { Button } from "../../../../components/ui/button";
 import {
@@ -18,22 +17,32 @@ const navigationItems = [
 export const NavigationBarSection = (): JSX.Element => {
   return (
     <nav className="relative w-full h-[60px] sm:h-[70px] lg:h-[82px] bg-white border-b border-[#c3dfeb]">
-      {/* logo: ~9% od lewej, centrowane pionowo */}
+      {/* logo */}
       <img
         className="absolute top-1/2 -translate-y-1/2 left-4 sm:left-8 lg:left-[9%] h-[50%] sm:h-[55%] lg:h-[60%] w-auto"
         alt="Innovations Hub Foundation"
         src="/obraz.png"
       />
 
-      {/* menu + CTA: ~9% od prawej, centrowane pionowo */}
+      {/* menu + CTA */}
       <div className="absolute top-1/2 -translate-y-1/2 right-4 sm:right-8 lg:right-[9%] flex items-center gap-2 sm:gap-4 lg:gap-10">
         <NavigationMenu className="hidden lg:block">
           <NavigationMenuList className="flex items-center gap-10">
             {navigationItems.map((item, index) => (
               <NavigationMenuItem key={index}>
-                <NavigationMenuTrigger className="flex items-center gap-1 bg-transparent hover:bg-transparent focus:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-transparent p-0 h-auto font-bold text-base [font-family:'Montserrat',Helvetica] text-ui-dark-blue">
+                <NavigationMenuTrigger
+                  className="
+                    flex items-center gap-1
+                    bg-transparent hover:bg-transparent focus:bg-transparent
+                    data-[active]:bg-transparent data-[state=open]:bg-transparent
+                    p-0 h-auto font-bold text-base [font-family:'Montserrat',Helvetica] text-ui-dark-blue
+                    [&>svg:last-child]:h-5 [&>svg:last-child]:w-5
+                  "
+                >
                   {item.label}
-                  <ChevronDownIcon className="w-6 h-6" />
+                  {/* UWAGA: nie dodajemy tu własnego <ChevronDownIcon />.
+                      Wbudowany chevron NavigationMenuTrigger zostaje
+                      i powyżej sterujemy jego rozmiarem. */}
                 </NavigationMenuTrigger>
               </NavigationMenuItem>
             ))}
