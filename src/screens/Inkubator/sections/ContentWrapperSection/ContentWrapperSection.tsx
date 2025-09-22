@@ -17,7 +17,6 @@ export const ContentWrapperSection = (): JSX.Element => {
     []
   );
 
-  // szerokość okna → sterowanie układem
   const [vw, setVw] = useState<number>(
     typeof window !== "undefined" ? window.innerWidth : 1920
   );
@@ -27,7 +26,7 @@ export const ContentWrapperSection = (): JSX.Element => {
     return () => window.removeEventListener("resize", onR);
   }, []);
 
-  // ile kart wyświetlamy
+  // ile kart widzimy na raz
   const VISIBLE = vw >= 1280 ? 4 : vw >= 1024 ? 3 : vw >= 768 ? 2 : 1;
   const GAP_PX = vw < 768 ? 16 : 20;
   const CARD_W = 280;
@@ -36,7 +35,6 @@ export const ContentWrapperSection = (): JSX.Element => {
   const [index, setIndex] = useState(0);
   const total = companies.length;
 
-  // widoczne elementy (zawijane modulo)
   const visible = useMemo(() => {
     const out: typeof companies = [];
     for (let i = 0; i < VISIBLE; i++) out.push(companies[(index + i) % total]);
@@ -49,6 +47,7 @@ export const ContentWrapperSection = (): JSX.Element => {
   // pozycje pionowe
   const topCards = vw < 640 ? 140 : vw < 1024 ? 170 : 191;
   const topGlow = vw < 640 ? 220 : 300;
+  const topBar = topGlow + 34; // pasek z kropkami/licznikiem
 
   return (
     <section className="w-full h-[350px] sm:h-[400px] lg:h-[431px] relative">
@@ -114,7 +113,7 @@ export const ContentWrapperSection = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Strzałki boczne — desktop (>=1280px) // odsunięte o 72px poza tor */}
+      {/* Strzałki — desktop (>=1280px), odsunięte od kart */}
       <Button
         variant="outline"
         size="icon"
@@ -128,7 +127,6 @@ export const ContentWrapperSection = (): JSX.Element => {
       >
         <ChevronLeftIcon className="w-6 h-6" />
       </Button>
-
       <Button
         variant="outline"
         size="icon"
@@ -143,18 +141,33 @@ export const ContentWrapperSection = (): JSX.Element => {
         <ChevronRightIcon className="w-6 h-6" />
       </Button>
 
-      {/* Licznik — tylko desktop (pojedynczy licznik, bez kropek) */}
+      {/* Pasek (kropki + licznik) — DESKTOP/TABLET */}
       <div
-        className="hidden xl:flex absolute left-1/2 -translate-x-1/2 font-raleway-14-semibold text-ui-dark-blue text-sm"
-        style={{ top: `${topGlow + 34}px` }}
+        className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-3"
+        style={{ top: `${topBar}px` }}
       >
-        {index + 1}/{total}
+        <div className="flex items-center gap-2">
+          {companies.map((_, i) => {
+            const active = i === index;
+            return (
+              <span
+                key={i}
+                className={`h-2 rounded-full transition-all ${
+                  active ? "w-6 bg-[#4EBFEE]" : "w-2 bg-uigrey-blue/80"
+                }`}
+              />
+            );
+          })}
+        </div>
+        <div className="font-raleway-14-semibold text-ui-dark-blue text-sm">
+          {index + 1}/{total}
+        </div>
       </div>
 
-      {/* Sterowanie mobile/tablet — JEDYNY wskaźnik (kropki + licznik) */}
+      {/* Sterowanie — MOBILE: strzałki + pasek między nimi */}
       <div
-        className="xl:hidden absolute left-1/2 -translate-x-1/2 w-[min(360px,100%)] px-2 flex items-center justify-between"
-        style={{ top: `${topGlow + 34}px` }}
+        className="md:hidden absolute left-1/2 -translate-x-1/2 w-[min(360px,100%)] px-2 flex items-center justify-between"
+        style={{ top: `${topBar}px` }}
       >
         <Button
           variant="outline"
