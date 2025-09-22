@@ -72,7 +72,7 @@ export const ContentWrapperSection = (): JSX.Element => {
             <stop offset="45%" stopColor="#4EBFEE" stopOpacity="0.10" />
             <stop offset="100%" stopColor="#4EBFEE" stopOpacity="0.00" />
           </radialGradient>
-          <linearGradient id="sideFade" x1="0" y1="0" x2="1180" y2="0" gradientUnits="userSpaceOnUse">
+          <linearGradient id="sideFade" x1="0" y1="0" x2="1180" y2="0">
             <stop offset="0" stopColor="black" stopOpacity="0" />
             <stop offset="0.08" stopColor="black" stopOpacity="1" />
             <stop offset="0.92" stopColor="black" stopOpacity="1" />
@@ -104,8 +104,8 @@ export const ContentWrapperSection = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Kropki + licznik */}
-      <div className="inline-flex items-center gap-3 absolute top-[290px] sm:top-[320px] lg:top-[355px] left-1/2 -translate-x-1/2">
+      {/* Kropki + licznik — DESKTOP/TABLET */}
+      <div className="hidden md:inline-flex items-center gap-3 absolute top-[320px] lg:top-[355px] left-1/2 -translate-x-1/2">
         <div className="flex items-center gap-2">
           {companies.map((_, i) => {
             const active = i === index;
@@ -125,7 +125,7 @@ export const ContentWrapperSection = (): JSX.Element => {
         </div>
       </div>
 
-      {/* STRZAŁKI — DESKTOP (po bokach, nad kartami) */}
+      {/* STRZAŁKI — DESKTOP */}
       <Button
         variant="outline"
         size="icon"
@@ -145,8 +145,8 @@ export const ContentWrapperSection = (): JSX.Element => {
         <ChevronRightIcon className="w-5 h-5 lg:w-6 lg:h-6" />
       </Button>
 
-      {/* STRZAŁKI — MOBILE (pod kartami, nie nachodzą na karty) */}
-      <div className="md:hidden absolute left-1/2 -translate-x-1/2 top-[260px] w-[300px] px-2 flex items-center justify-between">
+      {/* STEROWANIE — MOBILE: niżej + licznik między strzałkami */}
+      <div className="md:hidden absolute left-1/2 -translate-x-1/2 top-[300px] w-[300px] px-2 flex items-center justify-between">
         <Button
           variant="outline"
           size="icon"
@@ -156,6 +156,25 @@ export const ContentWrapperSection = (): JSX.Element => {
         >
           <ChevronLeftIcon className="w-4 h-4" />
         </Button>
+
+        {/* środek: kropki + licznik w jednej belce */}
+        <div className="flex flex-col items-center gap-1">
+          <div className="flex items-center gap-2">
+            {companies.map((_, i) => {
+              const active = i === index;
+              return (
+                <span
+                  key={i}
+                  className={`h-2 rounded-full transition-all ${active ? "w-6 bg-[#4EBFEE]" : "w-2 bg-uigrey-blue/80"}`}
+                />
+              );
+            })}
+          </div>
+          <div className="font-raleway-14-semibold text-ui-dark-blue text-xs">
+            {index + 1}/{total}
+          </div>
+        </div>
+
         <Button
           variant="outline"
           size="icon"
