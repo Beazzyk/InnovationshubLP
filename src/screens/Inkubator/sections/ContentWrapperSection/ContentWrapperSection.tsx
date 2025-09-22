@@ -3,19 +3,13 @@ import React, { useMemo, useState } from "react";
 import { Button } from "../../../../components/ui/button";
 import { Card, CardContent } from "../../../../components/ui/card";
 
-/**
- * Karuzela: 4 karty widoczne, krok = 1 karta, pętla nieskończona.
- * Szerokość toru: 1180 px; karta: 280 px; gap: 20 px => 4*280 + 3*20 = 1180.
- */
 export const ContentWrapperSection = (): JSX.Element => {
-  // Możesz dodać własne logotypy — używam istniejących assetów w projekcie.
   const companies = useMemo(
     () => [
       { id: 1, src: "/rectangle-164.png", alt: "Innovations Hub 2025" },
       { id: 2, src: "/rectangle-164-1.png", alt: "Akademia Przyszłości" },
       { id: 3, src: "/rectangle-164-2.png", alt: "Innovations Incubator" },
       { id: 4, src: "/rectangle-164-3.png", alt: "Innovations Incubator 2" },
-      // mokowane – ponownie wykorzystujemy istniejące pliki, by nie było 404:
       { id: 5, src: "/rectangle-164-1.png", alt: "Calmsie" },
       { id: 6, src: "/rectangle-164-2.png", alt: "Binderless" },
       { id: 7, src: "/rectangle-164-3.png", alt: "OpenGrant" },
@@ -23,32 +17,25 @@ export const ContentWrapperSection = (): JSX.Element => {
     []
   );
 
-  const [isMobile, setIsMobile] = useState(false);
-  
+  const [isMobile, setIsMobile] = React.useState(false);
   React.useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
-  const VISIBLE = isMobile ? 1 : 4; // ile kart na ekranie
-  const GAP_PX = isMobile ? 16 : 20; // gap
-  const CARD_W = isMobile ? 280 : 280;
+  const VISIBLE = isMobile ? 1 : 4;
+  const GAP_PX = isMobile ? 16 : 20;
 
-  const [index, setIndex] = useState(0); // indeks karty „pierwszej z lewej”
-
+  const [index, setIndex] = useState(0);
   const total = companies.length;
 
-  // Zwraca 4 elementy zaczynając od index, owinięte modulo (infinite loop)
   const visible = useMemo(() => {
     const out: typeof companies = [];
-    for (let i = 0; i < VISIBLE; i++) {
-      const at = (index + i) % total;
-      out.push(companies[at]);
-    }
+    for (let i = 0; i < VISIBLE; i++) out.push(companies[(index + i) % total]);
     return out;
-  }, [companies, index, total]);
+  }, [companies, index, total, VISIBLE]);
 
   const goNext = () => setIndex((i) => (i + 1) % total);
   const goPrev = () => setIndex((i) => (i - 1 + total) % total);
@@ -69,12 +56,12 @@ export const ContentWrapperSection = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Poświata TYLKO pod kartami — SVG */}
+      {/* Poświata */}
       <svg
         className="pointer-events-none absolute z-0 left-1/2 -translate-x-1/2"
-        width={isMobile ? "300" : "1180"}
+        width={isMobile ? 300 : 1180}
         height="58"
-        viewBox={`0 0 ${isMobile ? "300" : "1180"} 58`}
+        viewBox={`0 0 ${isMobile ? 300 : 1180} 58`}
         fill="none"
         style={{ top: isMobile ? "220px" : "300px" }}
         aria-hidden="true"
@@ -91,14 +78,14 @@ export const ContentWrapperSection = (): JSX.Element => {
             <stop offset="0.92" stopColor="black" stopOpacity="1" />
             <stop offset="1" stopColor="black" stopOpacity="0" />
           </linearGradient>
-          <mask id="softSides" maskUnits="userSpaceOnUse" x="0" y="0" width={isMobile ? "300" : "1180"} height="58">
-            <rect x="0" y="0" width={isMobile ? "300" : "1180"} height="58" fill="url(#sideFade)" />
+          <mask id="softSides" x="0" y="0" width={isMobile ? 300 : 1180} height="58">
+            <rect x="0" y="0" width={isMobile ? 300 : 1180} height="58" fill="url(#sideFade)" />
           </mask>
         </defs>
-        <rect x="0" y="0" width={isMobile ? "300" : "1180"} height="58" rx="28" fill="url(#glow)" mask="url(#softSides)" />
+        <rect x="0" y="0" width={isMobile ? 300 : 1180} height="58" rx="28" fill="url(#glow)" mask="url(#softSides)" />
       </svg>
 
-      {/* Rząd kart – precyzyjne wymiary, by NIC się nie ucinało */}
+      {/* Karty */}
       <div
         className="relative z-10 absolute top-[140px] sm:top-[170px] lg:top-[191px] left-1/2 -translate-x-1/2 flex justify-center"
         style={{ width: isMobile ? 300 : 1180, height: 124 }}
@@ -108,18 +95,9 @@ export const ContentWrapperSection = (): JSX.Element => {
             <Card
               key={logo.id}
               className="w-[280px] bg-white rounded-2xl border border-[#F5FAFD] shadow-card-shadow cursor-pointer transition-transform hover:-translate-y-[2px]"
-              onClick={() => {
-                // np. klik w kartę — tutaj możesz otworzyć modal lub przejść gdzieś:
-                // console.log("Clicked company:", logo.alt);
-              }}
             >
               <CardContent className="flex flex-col items-start gap-1 p-4">
-                <img
-                  className="w-full h-[100px] object-contain"
-                  alt={logo.alt}
-                  src={logo.src}
-                  loading="lazy"
-                />
+                <img className="w-full h-[100px] object-contain" alt={logo.alt} src={logo.src} loading="lazy" />
               </CardContent>
             </Card>
           ))}
@@ -136,36 +114,58 @@ export const ContentWrapperSection = (): JSX.Element => {
                 key={i}
                 aria-label={`Przejdź do pozycji ${i + 1}`}
                 onClick={() => setIndex(i)}
-                className={`h-2 rounded-full transition-all ${
-                  active ? "w-6 bg-[#4EBFEE]" : "w-2 bg-uigrey-blue/80"
-                }`}
+                className={`h-2 rounded-full transition-all ${active ? "w-6 bg-[#4EBFEE]" : "w-2 bg-uigrey-blue/80"}`}
                 style={{ outline: "none" }}
               />
             );
           })}
         </div>
-        <div className="font-raleway-14-semibold text-ui-dark-blue text-sm">{index + 1}/{total}</div>
+        <div className="font-raleway-14-semibold text-ui-dark-blue text-sm">
+          {index + 1}/{total}
+        </div>
       </div>
 
-      {/* Strzałki – zawinięcie modulo, zawsze ten sam kierunek */}
+      {/* STRZAŁKI — DESKTOP (po bokach, nad kartami) */}
       <Button
         variant="outline"
         size="icon"
-        className="absolute top-[180px] sm:top-[210px] lg:top-[231px] left-4 sm:left-8 lg:left-[77px] w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 border-2 border-[#0F5575] rounded-[5px]"
+        className="hidden md:inline-flex absolute top-[210px] lg:top-[231px] left-8 lg:left-[77px] w-10 h-10 lg:w-11 lg:h-11 border-2 border-[#0F5575] rounded-[5px]"
         aria-label="Poprzednie"
         onClick={goPrev}
       >
-        <ChevronLeftIcon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+        <ChevronLeftIcon className="w-5 h-5 lg:w-6 lg:h-6" />
       </Button>
       <Button
         variant="outline"
         size="icon"
-        className="absolute top-[180px] sm:top-[210px] lg:top-[231px] right-4 sm:right-8 lg:right-[77px] w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 border-2 border-[#0F5575] rounded-[5px]"
+        className="hidden md:inline-flex absolute top-[210px] lg:top-[231px] right-8 lg:right-[77px] w-10 h-10 lg:w-11 lg:h-11 border-2 border-[#0F5575] rounded-[5px]"
         aria-label="Następne"
         onClick={goNext}
       >
-        <ChevronRightIcon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+        <ChevronRightIcon className="w-5 h-5 lg:w-6 lg:h-6" />
       </Button>
+
+      {/* STRZAŁKI — MOBILE (pod kartami, nie nachodzą na karty) */}
+      <div className="md:hidden absolute left-1/2 -translate-x-1/2 top-[260px] w-[300px] px-2 flex items-center justify-between">
+        <Button
+          variant="outline"
+          size="icon"
+          className="w-9 h-9 border-2 border-[#0F5575] rounded-[5px]"
+          aria-label="Poprzednie"
+          onClick={goPrev}
+        >
+          <ChevronLeftIcon className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="w-9 h-9 border-2 border-[#0F5575] rounded-[5px]"
+          aria-label="Następne"
+          onClick={goNext}
+        >
+          <ChevronRightIcon className="w-4 h-4" />
+        </Button>
+      </div>
     </section>
   );
 };
