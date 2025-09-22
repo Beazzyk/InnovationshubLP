@@ -23,9 +23,18 @@ export const ContentWrapperSection = (): JSX.Element => {
     []
   );
 
-  const VISIBLE = 4; // ile kart na ekranie
-  const GAP_PX = 20; // gap-5
-  const CARD_W = 280;
+  const [isMobile, setIsMobile] = useState(false);
+  
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const VISIBLE = isMobile ? 1 : 4; // ile kart na ekranie
+  const GAP_PX = isMobile ? 16 : 20; // gap
+  const CARD_W = isMobile ? 280 : 280;
 
   const [index, setIndex] = useState(0); // indeks karty „pierwszej z lewej”
 
@@ -45,16 +54,16 @@ export const ContentWrapperSection = (): JSX.Element => {
   const goPrev = () => setIndex((i) => (i - 1 + total) % total);
 
   return (
-    <section className="w-full h-[431px] relative">
+    <section className="w-full h-[350px] sm:h-[400px] lg:h-[431px] relative">
       {/* Nagłówek */}
-      <div className="flex flex-col w-[780px] items-center gap-2 absolute top-[60px] left-1/2 -translate-x-1/2">
+      <div className="flex flex-col w-full max-w-[320px] sm:max-w-[600px] lg:max-w-[780px] items-center gap-2 absolute top-[40px] sm:top-[50px] lg:top-[60px] left-1/2 -translate-x-1/2 px-4">
         <div className="flex flex-col items-start gap-2 w-full">
-          <div className="mt-[-1px] [font-family:'Montserrat',Helvetica] font-normal text-uiblue text-2xl text-center leading-6">
+          <div className="mt-[-1px] [font-family:'Montserrat',Helvetica] font-normal text-uiblue text-lg sm:text-xl lg:text-2xl text-center leading-6 w-full">
             <span className="leading-[var(--header-h3-line-height)] font-header-h3 [font-style:var(--header-h3-font-style)] font-[number:var(--header-h3-font-weight)] tracking-[var(--header-h3-letter-spacing)] text-[length:var(--header-h3-font-size)]">
               Szukasz wdrożenia?
             </span>
           </div>
-          <div className="font-header-h2 font-[number:var(--header-h2-font-weight)] text-ui-dark-blue text-[length:var(--header-h2-font-size)] text-center tracking-[var(--header-h2-letter-spacing)] leading-[var(--header-h2-line-height)] [font-style:var(--header-h2-font-style)]">
+          <div className="font-header-h2 font-[number:var(--header-h2-font-weight)] text-ui-dark-blue text-xl sm:text-2xl lg:text-[length:var(--header-h2-font-size)] text-center tracking-[var(--header-h2-letter-spacing)] leading-[var(--header-h2-line-height)] [font-style:var(--header-h2-font-style)] w-full">
             Poznaj firmy otwarte na innowacje
           </div>
         </div>
@@ -63,11 +72,11 @@ export const ContentWrapperSection = (): JSX.Element => {
       {/* Poświata TYLKO pod kartami — SVG */}
       <svg
         className="pointer-events-none absolute z-0 left-1/2 -translate-x-1/2"
-        width="1180"
+        width={isMobile ? "300" : "1180"}
         height="58"
-        viewBox="0 0 1180 58"
+        viewBox={`0 0 ${isMobile ? "300" : "1180"} 58`}
         fill="none"
-        style={{ top: "300px" }}
+        style={{ top: isMobile ? "220px" : "300px" }}
         aria-hidden="true"
       >
         <defs>
@@ -82,17 +91,17 @@ export const ContentWrapperSection = (): JSX.Element => {
             <stop offset="0.92" stopColor="black" stopOpacity="1" />
             <stop offset="1" stopColor="black" stopOpacity="0" />
           </linearGradient>
-          <mask id="softSides" maskUnits="userSpaceOnUse" x="0" y="0" width="1180" height="58">
-            <rect x="0" y="0" width="1180" height="58" fill="url(#sideFade)" />
+          <mask id="softSides" maskUnits="userSpaceOnUse" x="0" y="0" width={isMobile ? "300" : "1180"} height="58">
+            <rect x="0" y="0" width={isMobile ? "300" : "1180"} height="58" fill="url(#sideFade)" />
           </mask>
         </defs>
-        <rect x="0" y="0" width="1180" height="58" rx="28" fill="url(#glow)" mask="url(#softSides)" />
+        <rect x="0" y="0" width={isMobile ? "300" : "1180"} height="58" rx="28" fill="url(#glow)" mask="url(#softSides)" />
       </svg>
 
       {/* Rząd kart – precyzyjne wymiary, by NIC się nie ucinało */}
       <div
-        className="relative z-10 absolute top-[191px] left-1/2 -translate-x-1/2 flex justify-center"
-        style={{ width: 1180, height: 124 }}
+        className="relative z-10 absolute top-[140px] sm:top-[170px] lg:top-[191px] left-1/2 -translate-x-1/2 flex justify-center"
+        style={{ width: isMobile ? 300 : 1180, height: 124 }}
       >
         <div className="flex" style={{ gap: GAP_PX }}>
           {visible.map((logo) => (
@@ -118,7 +127,7 @@ export const ContentWrapperSection = (): JSX.Element => {
       </div>
 
       {/* Kropki + licznik */}
-      <div className="inline-flex items-center gap-3 absolute top-[355px] left-1/2 -translate-x-1/2">
+      <div className="inline-flex items-center gap-3 absolute top-[290px] sm:top-[320px] lg:top-[355px] left-1/2 -translate-x-1/2">
         <div className="flex items-center gap-2">
           {companies.map((_, i) => {
             const active = i === index;
@@ -135,27 +144,27 @@ export const ContentWrapperSection = (): JSX.Element => {
             );
           })}
         </div>
-        <div className="font-raleway-14-semibold text-ui-dark-blue">{index + 1}/{total}</div>
+        <div className="font-raleway-14-semibold text-ui-dark-blue text-sm">{index + 1}/{total}</div>
       </div>
 
       {/* Strzałki – zawinięcie modulo, zawsze ten sam kierunek */}
       <Button
         variant="outline"
         size="icon"
-        className="absolute top-[231px] left-[77px] w-11 h-11 border-2 border-[#0F5575] rounded-[5px] h-auto"
+        className="absolute top-[180px] sm:top-[210px] lg:top-[231px] left-4 sm:left-8 lg:left-[77px] w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 border-2 border-[#0F5575] rounded-[5px]"
         aria-label="Poprzednie"
         onClick={goPrev}
       >
-        <ChevronLeftIcon className="w-6 h-6" />
+        <ChevronLeftIcon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
       </Button>
       <Button
         variant="outline"
         size="icon"
-        className="absolute top-[231px] right-[77px] w-11 h-11 border-2 border-[#0F5575] rounded-[5px] h-auto"
+        className="absolute top-[180px] sm:top-[210px] lg:top-[231px] right-4 sm:right-8 lg:right-[77px] w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 border-2 border-[#0F5575] rounded-[5px]"
         aria-label="Następne"
         onClick={goNext}
       >
-        <ChevronRightIcon className="w-6 h-6" />
+        <ChevronRightIcon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
       </Button>
     </section>
   );

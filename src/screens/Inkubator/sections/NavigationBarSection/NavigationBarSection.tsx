@@ -17,17 +17,17 @@ const navigationItems = [
 
 export const NavigationBarSection = (): JSX.Element => {
   return (
-    <nav className="relative w-full h-[82px] bg-white border-b border-[#c3dfeb]">
+    <nav className="relative w-full h-[60px] sm:h-[70px] lg:h-[82px] bg-white border-b border-[#c3dfeb]">
       {/* logo: ~9% od lewej, centrowane pionowo */}
       <img
-        className="absolute top-1/2 -translate-y-1/2 left-[9%] h-[60%] w-auto"
+        className="absolute top-1/2 -translate-y-1/2 left-4 sm:left-8 lg:left-[9%] h-[50%] sm:h-[55%] lg:h-[60%] w-auto"
         alt="Innovations Hub Foundation"
         src="/obraz.png"
       />
 
       {/* menu + CTA: ~9% od prawej, centrowane pionowo */}
-      <div className="absolute top-1/2 -translate-y-1/2 right-[9%] flex items-center gap-10">
-        <NavigationMenu>
+      <div className="absolute top-1/2 -translate-y-1/2 right-4 sm:right-8 lg:right-[9%] flex items-center gap-2 sm:gap-4 lg:gap-10">
+        <NavigationMenu className="hidden lg:block">
           <NavigationMenuList className="flex items-center gap-10">
             {navigationItems.map((item, index) => (
               <NavigationMenuItem key={index}>
@@ -40,8 +40,9 @@ export const NavigationBarSection = (): JSX.Element => {
           </NavigationMenuList>
         </NavigationMenu>
 
-        <Button className="h-[55px] px-6 py-2 bg-[#0f5575] hover:bg-[#0f5575]/90 text-uiblue-tint rounded-[5px] font-bold text-base [font-family:'Montserrat',Helvetica] tracking-[-0.32px] leading-6 whitespace-nowrap">
-          Dołącz do Inkubatora!
+        <Button className="h-[40px] sm:h-[48px] lg:h-[55px] px-3 sm:px-4 lg:px-6 py-2 bg-[#0f5575] hover:bg-[#0f5575]/90 text-uiblue-tint rounded-[5px] font-bold text-sm sm:text-base [font-family:'Montserrat',Helvetica] tracking-[-0.32px] leading-6">
+          <span className="hidden sm:inline">Dołącz do Inkubatora!</span>
+          <span className="sm:hidden">Dołącz</span>
         </Button>
       </div>
     </nav>

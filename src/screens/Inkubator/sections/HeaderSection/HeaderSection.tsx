@@ -28,21 +28,21 @@ const StartupCard = ({
 }: {
   logo: string; title: string; description: string; logoClass?: string;
 }) => (
-  <Card className="flex-shrink-0 w-[280px] bg-white rounded-2xl shadow-card-shadow">
+  <Card className="flex-shrink-0 w-[240px] sm:w-[260px] lg:w-[280px] bg-white rounded-2xl shadow-card-shadow">
     <CardContent className="flex flex-col items-start gap-0.5 p-4">
       <div className="flex flex-col items-center justify-center gap-1 w-full">
         <div className="flex items-center gap-4 w-full">
-          <img className={`w-[90px] h-10 ${logoClass}`} alt="Company logo" src={logo} />
-          <div className="[display:-webkit-box] items-center justify-center flex-1 h-10 [font-family:'Montserrat',Helvetica] font-semibold text-ui-black text-sm tracking-[-0.28px] leading-[19.6px] overflow-hidden text-ellipsis [-webkit-line-clamp:2] [-webkit-box-orient:vertical] whitespace-pre-line">
+          <img className={`w-[70px] sm:w-[80px] lg:w-[90px] h-8 sm:h-9 lg:h-10 ${logoClass}`} alt="Company logo" src={logo} />
+          <div className="[display:-webkit-box] items-center justify-center flex-1 h-8 sm:h-9 lg:h-10 [font-family:'Montserrat',Helvetica] font-semibold text-ui-black text-xs sm:text-sm tracking-[-0.28px] leading-[19.6px] overflow-hidden text-ellipsis [-webkit-line-clamp:2] [-webkit-box-orient:vertical] whitespace-pre-line">
             {title}
           </div>
         </div>
         <div className="flex items-end gap-2 w-full">
-          <div className="flex-1 font-body-information font-[number:var(--body-information-font-weight)] text-ui-dark-blue text-[length:var(--body-information-font-size)] tracking-[var(--body-information-letter-spacing)] leading-[var(--body-information-line-height)] [font-style:var(--body-information-font-style)] whitespace-pre-line">
+          <div className="flex-1 font-body-information font-[number:var(--body-information-font-weight)] text-ui-dark-blue text-[10px] sm:text-[length:var(--body-information-font-size)] tracking-[var(--body-information-letter-spacing)] leading-[var(--body-information-line-height)] [font-style:var(--body-information-font-style)] whitespace-pre-line">
             {description}
           </div>
           <div className="inline-flex h-[18px] items-center gap-2.5">
-            <ArrowRightIcon className="w-4 h-4" />
+            <ArrowRightIcon className="w-3 h-3 sm:w-4 sm:h-4" />
           </div>
         </div>
       </div>
@@ -128,20 +128,20 @@ export const HeaderSection = (): JSX.Element => {
   ];
 
   return (
-    <section className="flex flex-col w-full items-start pt-0 pb-10 px-0">
+    <section className="flex flex-col w-full items-start pt-0 pb-6 sm:pb-8 lg:pb-10 px-0">
       <style>{styles}</style>
 
-      <div className="flex items-center justify-around gap-[171px] px-0 py-[60px] w-full">
+      <div className="flex items-center justify-center px-4 sm:px-8 lg:px-0 py-8 sm:py-12 lg:py-[60px] w-full">
         <div className="flex flex-col items-center justify-center gap-10 flex-1">
-          <h2 className="w-[595px] font-header-h2 font-[number:var(--header-h2-font-weight)] text-ui-black text-[length:var(--header-h2-font-size)] text-center tracking-[var(--header-h2-letter-spacing)] leading-[var(--header-h2-line-height)] [font-style:var(--header-h2-font-style)]">
+          <h2 className="max-w-full sm:max-w-[500px] lg:max-w-[595px] font-header-h2 font-[number:var(--header-h2-font-weight)] text-ui-black text-xl sm:text-2xl lg:text-[length:var(--header-h2-font-size)] text-center tracking-[var(--header-h2-letter-spacing)] leading-[var(--header-h2-line-height)] [font-style:var(--header-h2-font-style)] px-4">
             Poznaj start-upy tworzone przez nową generację founderów
           </h2>
         </div>
       </div>
 
-      <div className="flex flex-col items-start gap-6 w-full">
-        <MarqueeRow items={startupCards}  speed={32} gap={20} className="py-1" />
-        <MarqueeRow items={secondRowCards} speed={38} gap={20} className="py-1" />
+      <div className="flex flex-col items-start gap-4 sm:gap-6 w-full">
+        <MarqueeRow items={startupCards}  speed={32} gap={12} className="py-1" />
+        <MarqueeRow items={secondRowCards} speed={38} gap={12} className="py-1" />
       </div>
     </section>
   );

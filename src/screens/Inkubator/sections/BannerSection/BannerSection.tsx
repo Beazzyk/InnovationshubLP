@@ -169,7 +169,8 @@ const FlyToSelected: React.FC<{ coords?: LatLngExpression | null }> = ({ coords 
 /* ====== komponent ====== */
 export const BannerSection = (): JSX.Element => {
   const [query, setQuery] = useState("");
-  const [selectedId, setSelectedId] = useState<number | null>(null); // start bez popupu
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [showMobileList, setShowMobileList] = useState(false);
   const [filters, setFilters] = useState<MultiFilters>({});
   const [open, setOpen] = useState<OpenDropdown>(null);
 
@@ -211,27 +212,36 @@ export const BannerSection = (): JSX.Element => {
     <section className="flex flex-col w-full items-center pt-[60px] pb-0 px-0">
       {/* Header */}
       {/* Nagłówek nad mapą – jak na screenie */}
-<div className="w-full">
-  <div className="max-w-[1180px] mx-auto">
-    <div className="pl-[72px] pt-6 pb-4">
+      <div className="w-full">
+        <div className="max-w-[1180px] mx-auto">
+          <div className="pl-4 sm:pl-8 lg:pl-[72px] pt-6 pb-4">
       <div className="text-uiblue font-section-name font-[number:var(--section-name-font-weight)] text-[length:var(--section-name-font-size)] tracking-[var(--section-name-letter-spacing)] leading-[var(--section-name-line-height)] [font-style:var(--section-name-font-style)]">
         MAPA EKOSYSTEMU
       </div>
 
-      <h2 className="mt-2 text-ui-black font-header-h2 font-[number:var(--header-h2-font-weight)] text-[length:var(--header-h2-font-size)] tracking-[var(--header-h2-letter-spacing)] leading-[var(--header-h2-line-height)] [font-style:var(--header-h2-font-style)]">
+            <h2 className="mt-2 text-ui-black font-header-h2 font-[number:var(--header-h2-font-weight)] text-xl sm:text-2xl lg:text-[length:var(--header-h2-font-size)] tracking-[var(--header-h2-letter-spacing)] leading-[var(--header-h2-line-height)] [font-style:var(--header-h2-font-style)]">
         Odkryj Polski Ekosystem
         <br />
         Startupowy
       </h2>
-    </div>
-  </div>
-</div>
+          </div>
+        </div>
+      </div>
 
+      {/* Mobile toggle button */}
+      <div className="lg:hidden w-full px-4 mb-4">
+        <Button
+          onClick={() => setShowMobileList(!showMobileList)}
+          className="w-full h-[48px] bg-uiblue text-white hover:bg-uiblue/90"
+        >
+          {showMobileList ? 'Pokaż mapę' : 'Pokaż listę podmiotów'}
+        </Button>
+      </div>
 
       {/* MAPA + LISTA */}
-      <div className="w-full h-[851px] flex">
+      <div className="w-full h-[400px] sm:h-[600px] lg:h-[851px] flex flex-col lg:flex-row">
         {/* Mapa */}
-        <div className="relative flex-1">
+        <div className={`relative flex-1 ${showMobileList ? 'hidden lg:block' : 'block'}`}>
           <style>
             {`
               .leaflet-popup.leaflet-custom-popup .leaflet-popup-tip{display:none;}
@@ -313,16 +323,18 @@ export const BannerSection = (): JSX.Element => {
         </div>
 
         {/* Panel listy */}
-        <aside className="w-[430px] h-full bg-white shadow-[-4px_0px_10px_#0f557526]">
+        <aside className={`w-full lg:w-[430px] h-full bg-white shadow-[-4px_0px_10px_#0f557526] ${showMobileList ? 'block' : 'hidden lg:block'}`}>
           <header className="flex items-center gap-2.5 px-4 py-2 bg-uiblue-tint">
             <h3 className="font-header-h4 text-ui-dark-blue">Lista podmiotów</h3>
           </header>
 
           {/* Filtry */}
           <div className="flex flex-col gap-4 p-4 border-t border-[#b7d3e0] relative">
-            <div className="text-center [font-family:'Raleway',Helvetica] font-semibold text-ui-dark-blue text-xs">Filtruj</div>
+            <div className="text-center [font-family:'Raleway',Helvetica] font-semibold text-ui-dark-blue text-xs">
+              Filtruj
+            </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-2">
               <DropdownChipMulti
                 label="Typ organizacji"
                 value={filters.orgType ?? []}
@@ -392,7 +404,7 @@ export const BannerSection = (): JSX.Element => {
           </div>
 
           {/* Lista */}
-          <ScrollArea className="h-[calc(100%-140px)] w-full">
+          <ScrollArea className="h-[calc(100%-200px)] lg:h-[calc(100%-140px)] w-full">
             <div className="flex flex-col">
               {filtered.map((org) => {
                 const isSelected = org.id === selectedId;
@@ -406,9 +418,9 @@ export const BannerSection = (): JSX.Element => {
                   >
                     <CardContent className="flex flex-col gap-1 px-4 py-2">
                       <div className="flex items-center gap-2">
-                        <img className="w-20 h-8 object-contain" alt={`${org.name} logo`} src={org.logo} />
+                        <img className="w-16 sm:w-20 h-6 sm:h-8 object-contain" alt={`${org.name} logo`} src={org.logo} />
                         <div
-                          className={`text-sm flex-1 [font-family:'Montserrat',Helvetica] font-semibold ${
+                          className={`text-xs sm:text-sm flex-1 [font-family:'Montserrat',Helvetica] font-semibold ${
                             isSelected ? "text-uiblue" : "text-ui-black"
                           }`}
                         >
@@ -417,7 +429,7 @@ export const BannerSection = (): JSX.Element => {
                         {isSelected ? <CheckIcon className="w-4 h-4" /> : <ArrowRightIcon className="w-4 h-4" />}
                       </div>
 
-                      <div className="flex flex-wrap items-end gap-[2px_12px]">
+                      <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-end gap-1 sm:gap-[2px_12px]">
                         <Meta label="Typ" value={org.orgType} />
                         <Meta label="Branża" value={org.industry} />
                         <Meta label="Wsparcie" value={org.supportType} />
@@ -463,22 +475,22 @@ function DropdownChipMulti<T extends string>({
       <Button
         variant="ghost"
         onClick={onOpen}
-        className={`${hasAny ? "bg-[#d4e9f6]" : "bg-[#e9f4fa]"} h-[35px] px-2.5 py-3.5 rounded-2xl hover:opacity-80 flex items-center gap-1`}
+        className={`${hasAny ? "bg-[#d4e9f6]" : "bg-[#e9f4fa]"} h-[35px] px-2 sm:px-2.5 py-3.5 rounded-2xl hover:opacity-80 flex items-center gap-1 w-full lg:w-auto justify-start`}
       >
         {hasAny && (
           <Badge className="w-4 h-4 bg-ui-dark-blue text-white text-[10px] rounded-full p-0 flex items-center justify-center">
             {value.length}
           </Badge>
         )}
-        <span className="[font-family:'Raleway',Helvetica] font-medium text-ui-black text-sm tracking-[-0.28px] leading-[21px]">
+        <span className="[font-family:'Raleway',Helvetica] font-medium text-ui-black text-xs sm:text-sm tracking-[-0.28px] leading-[21px] truncate">
           {label}
-          {hasAny ? `: ${summary}` : ""}
+          <span className="hidden sm:inline">{hasAny ? `: ${summary}` : ""}</span>
         </span>
         <ChevronDownIcon className="w-4 h-4" />
       </Button>
 
       {open && (
-        <div className="absolute z-20 mt-2 w-60 bg-white border border-[#b7d3e0] rounded-xl shadow-card-shadow p-2">
+        <div className="absolute z-20 mt-2 w-full sm:w-60 bg-white border border-[#b7d3e0] rounded-xl shadow-card-shadow p-2">
           <div className="flex items-center justify-between px-2 pb-2">
             <span className="text-xs text-ui-black/70">Zaznacz wiele</span>
             <button
@@ -527,16 +539,16 @@ function toggleMulti<T extends keyof MultiFilters>(
 }
 
 const Meta = ({ label, value }: { label: string; value: string }) => (
-  <div className="inline-flex items-center gap-2">
-    <span className="opacity-50 font-body-body-3 text-ui-black">{label}</span>
-    <span className="font-body-body-3 text-ui-black">{value}</span>
+  <div className="inline-flex items-center gap-1 sm:gap-2">
+    <span className="opacity-50 font-body-body-3 text-ui-black text-xs">{label}</span>
+    <span className="font-body-body-3 text-ui-black text-xs">{value}</span>
   </div>
 );
 
 const MetaCol = ({ label, value }: { label: string; value: string }) => (
   <div>
-    <div className="opacity-50 font-body-body-3 text-ui-black">{label}</div>
-    <div className="font-body-body-3 text-ui-black">{value}</div>
+    <div className="opacity-50 font-body-body-3 text-ui-black text-xs">{label}</div>
+    <div className="font-body-body-3 text-ui-black text-xs">{value}</div>
   </div>
 );
 

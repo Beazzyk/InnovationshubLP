@@ -4,7 +4,7 @@ import { Button } from "../../../../components/ui/button";
 
 export const HeroSection = (): JSX.Element => {
   return (
-    <section className="relative w-full h-[500px] overflow-hidden bg-[#0F5575]">
+    <section className="relative w-full h-[400px] sm:h-[450px] lg:h-[500px] overflow-hidden bg-[#0F5575]">
       {/* Lewy gradient: jaśniejszy + subtelny biały veil */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -16,7 +16,7 @@ export const HeroSection = (): JSX.Element => {
       />
 
       {/* Prawa grafika: rectangle106.svg z miękką maską od lewej */}
-      <div className="absolute top-0 right-0 h-full z-[5] pointer-events-none select-none">
+      <div className="absolute top-0 right-0 h-full z-[5] pointer-events-none select-none hidden sm:block">
         <img
           src="/rectangle106.svg"
           alt=""
@@ -29,43 +29,45 @@ export const HeroSection = (): JSX.Element => {
       </div>
 
       {/* Treść */}
-      <div className="relative z-10 flex flex-col justify-center h-full px-[130px]">
-        <div className="max-w-[800px]">
+      <div className="relative z-10 flex flex-col justify-center h-full px-4 sm:px-8 lg:px-[130px]">
+        <div className="max-w-full sm:max-w-[600px] lg:max-w-[800px]">
           {/* Label sekcji — większy */}
           <div className="mb-4">
             <span
               className="text-[#9ED6EA] font-section-name font-[number:var(--section-name-font-weight)] tracking-[var(--section-name-letter-spacing)] leading-[var(--section-name-line-height)] [font-style:var(--section-name-font-style)]"
               style={{
-                fontSize: "calc(var(--section-name-font-size) * 1.12)",
+                fontSize: "calc(var(--section-name-font-size) * 0.9)",
               }}
+              className="text-[#9ED6EA] font-section-name font-[number:var(--section-name-font-weight)] tracking-[var(--section-name-letter-spacing)] leading-[var(--section-name-line-height)] [font-style:var(--section-name-font-style)] text-sm sm:text-base lg:text-[calc(var(--section-name-font-size)*1.12)]"
             >
               Inkubator
             </span>
           </div>
 
           {/* H1 (jak było — zgodnie z design tokenami) */}
-          <h1 className="text-white font-header-h1 font-[number:var(--header-h1-font-weight)] text-[length:var(--header-h1-font-size)] tracking-[var(--header-h1-letter-spacing)] leading-[var(--header-h1-line-height)] [font-style:var(--header-h1-font-style)] mb-6">
+          <h1 className="text-white font-header-h1 font-[number:var(--header-h1-font-weight)] text-2xl sm:text-3xl lg:text-[length:var(--header-h1-font-size)] tracking-[var(--header-h1-letter-spacing)] leading-[var(--header-h1-line-height)] [font-style:var(--header-h1-font-style)] mb-4 sm:mb-6">
             Poznaj naszą społeczność - polski ekosystem startupowy
           </h1>
 
           {/* Lead — większy niż wcześniej i czytelny */}
           <p
-            className="text-white font-body-body-2 font-[number:var(--body-body-2-font-weight)] tracking-[var(--body-body-2-letter-spacing)] leading-[var(--body-body-2-line-height)] [font-style:var(--body-body-2-font-style)] mb-8 max-w-[600px]"
-            style={{ fontSize: "calc(var(--body-body-2-font-size) * 1.18)" }}
+            className="text-white font-body-body-2 font-[number:var(--body-body-2-font-weight)] tracking-[var(--body-body-2-letter-spacing)] leading-[var(--body-body-2-line-height)] [font-style:var(--body-body-2-font-style)] mb-6 sm:mb-8 text-sm sm:text-base lg:text-[calc(var(--body-body-2-font-size)*1.18)]"
           >
             Dołącz do sieci founderów, inkubatorów i innowatorów, którzy zmieniają zasady gry!
           </p>
 
           {/* CTA */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             {/* 1) biały przycisk z ciemnoniebieskim tekstem */}
-            <Button className="h-[55px] px-8 py-2 bg-white text-[#0F5575] border-2 border-white hover:bg-white/90 rounded-[5px] [font-family:'Montserrat',Helvetica] font-bold text-base tracking-[-0.32px] leading-6">
-              Mapa ekosystemu
+            <Button className="h-[48px] sm:h-[55px] px-6 sm:px-8 py-2 bg-white text-[#0F5575] border-2 border-white hover:bg-white/90 rounded-[5px] [font-family:'Montserrat',Helvetica] font-bold text-sm sm:text-base tracking-[-0.32px] leading-6">
+              <span className="hidden sm:inline">Mapa ekosystemu</span>
+              <span className="sm:hidden">Mapa</span>
             </Button>
 
             {/* 2) transparentny z białą ramką/tekstem */}
-            <Button className="h-[55px] px-8 py-2 bg-transparent border-2 border-white text-white hover:bg-white hover:text-ui-dark-blue rounded-[5px] [font-family:'Montserrat',Helvetica] font-bold text-base tracking-[-0.32px] leading-6">
-              Dołącz do ekosystemu
+            <Button className="h-[48px] sm:h-[55px] px-6 sm:px-8 py-2 bg-transparent border-2 border-white text-white hover:bg-white hover:text-ui-dark-blue rounded-[5px] [font-family:'Montserrat',Helvetica] font-bold text-sm sm:text-base tracking-[-0.32px] leading-6">
+              <span className="hidden sm:inline">Dołącz do ekosystemu</span>
+              <span className="sm:hidden">Dołącz</span>
             </Button>
           </div>
         </div>

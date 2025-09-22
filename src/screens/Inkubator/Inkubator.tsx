@@ -11,7 +11,7 @@ import { NotificationBarSection } from "./sections/NotificationBarSection/Notifi
 
 export const Inkubator = (): JSX.Element => {
   return (
-    <div className="bg-[#ffffff] overflow-hidden w-full min-w-[1440px] relative">
+    <div className="bg-[#ffffff] overflow-hidden w-full relative">
       <NotificationBarSection />
       <NavigationBarSection />
       <HeroSection />
