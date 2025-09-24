@@ -38,7 +38,9 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
       ref={ref}
       {...p}
       className={cn(
-        "w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#1B7BA7]/30 focus:border-[#1B7BA7]",
+        "w-full px-[17px] py-[9px] border rounded-2xl outline-none",
+        "border-[#5fa5c5] placeholder:text-[#080e1480] text-sm",
+        "focus:ring-2 focus:ring-[#1B7BA7]/20 focus:border-[#1B7BA7]",
         className
       )}
     />
@@ -458,54 +460,66 @@ const FitBoundsSimple: React.FC<{
   return null;
 };
 
-/* ====== Dropdown component ====== */
-const Dropdown: React.FC<{
+/* ====== Dropdown (styl 1:1 jak na screenie) ====== */
+const PillDropdown: React.FC<{
   label: string;
   value: string;
   options: string[];
   onChange: (value: string) => void;
   placeholder?: string;
-}> = ({ label, value, options, onChange, placeholder = "Wszystkie" }) => {
+}> = ({ label, value, options, onChange, placeholder = "Wybierz..." }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const hasValue = Boolean(value);
 
   return (
     <div className="relative">
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 hover:border-[#1B7BA7] focus:outline-none focus:ring-2 focus:ring-[#1B7BA7]/30"
+        onClick={() => setIsOpen((v) => !v)}
+        className={cn(
+          "w-full h-[35px] rounded-2xl px-3 pr-8 flex items-center gap-2 text-[13px] tracking-[-0.28px] leading-[21px]",
+          hasValue ? "bg-[#d4e9f6]" : "bg-[#e9f4fa]",
+          "text-[#0b1f2d] border border-transparent hover:opacity-90"
+        )}
       >
-        <span className="flex items-center gap-2">
-          {label === "Typ organizacji" && (
-            <div className="w-5 h-5 bg-[#1B7BA7] rounded-full flex items-center justify-center">
-              <span className="text-white text-xs font-bold">2</span>
-            </div>
-          )}
-          <span>{value || placeholder}</span>
-        </span>
-        <ChevronDownIcon className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        {/* licznik po lewej – 1:1 */}
+        {hasValue ? (
+          <span className="inline-flex w-4 h-4 items-center justify-center rounded-full bg-[#114b6a] text-white text-[10px]">
+            1
+          </span>
+        ) : (
+          <span className="w-4" />
+        )}
+
+        <span className="truncate">{label}</span>
+
+        <ChevronDownIcon className="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2" />
       </button>
 
       {isOpen && (
-        <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
+        <div className="absolute z-20 mt-1 w-full bg-white border border-[#b7d3e0] rounded-xl shadow-[0_12px_30px_rgba(15,85,117,.18)] overflow-hidden">
           <button
             onClick={() => {
               onChange("");
               setIsOpen(false);
             }}
-            className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 first:rounded-t-lg"
+            className="w-full px-3 py-2 text-left text-sm hover:bg-[#f5fafc]"
           >
             {placeholder}
           </button>
-          {options.map((option) => (
+          <div className="h-px bg-[#e6eef3]" />
+          {options.map((opt) => (
             <button
-              key={option}
+              key={opt}
               onClick={() => {
-                onChange(option);
+                onChange(opt);
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 last:rounded-b-lg"
+              className={cn(
+                "w-full px-3 py-2 text-left text-sm hover:bg-[#f5fafc]",
+                value === opt ? "font-semibold text-[#114b6a]" : "text-[#0b1f2d]"
+              )}
             >
-              {option}
+              {opt}
             </button>
           ))}
         </div>
@@ -513,7 +527,6 @@ const Dropdown: React.FC<{
     </div>
   );
 };
-
 
 /* =========================
    GŁÓWNY KOMPONENT
@@ -571,11 +584,10 @@ const BannerSection: React.FC = () => {
 
   return (
     <section className="flex flex-col w-full items-center pt-[60px] pb-0 px-0">
-      {/* NAGŁÓWEK + KARTA (side-by-side, top aligned) */}
+      {/* NAGŁÓWEK + KARTA */}
       <div className="w-full bg-white">
         <div className="max-w-[1180px] mx-auto px-4 sm:px-8 lg:px-[72px]">
           <div className="grid lg:grid-cols-[1fr_400px] gap-8 items-start py-8">
-            {/* Lewa: tytuły */}
             <div>
               <div className="text-[#5DADE2] font-medium text-sm uppercase tracking-wide mb-2">
                 MAPA EKOSYSTEMU
@@ -587,7 +599,6 @@ const BannerSection: React.FC = () => {
               </h2>
             </div>
 
-            {/* Prawa: karta CTA */}
             <aside>
               <div className="rounded-2xl border border-[#E6EEF3] shadow-[0_2px_10px_rgba(15,85,117,0.08)] bg-white p-6">
                 <p className="text-gray-700 text-sm leading-6 mb-4">
@@ -720,49 +731,45 @@ const BannerSection: React.FC = () => {
 
           {/* Filtry */}
           <div className="p-4 border-b border-gray-200 space-y-3">
-            <div className="text-center text-sm font-medium text-gray-700 mb-3">
-              Filtruj
-            </div>
+            <div className="text-center font-medium text-[#113a52] text-xs">Filtruj</div>
 
-            <div className="grid grid-cols-1 gap-2">
-              <Dropdown
+            {/* 2x2 siatka pigułek – 1:1 symetrycznie */}
+            <div className="grid grid-cols-2 gap-3">
+              <PillDropdown
                 label="Typ organizacji"
                 value={filters.category}
                 options={filterOptions.category}
                 onChange={(value) => setFilters({ ...filters, category: value })}
               />
-
-              <Dropdown
+              <PillDropdown
                 label="Branża/ścieżka"
                 value={filters.stage}
                 options={filterOptions.stage}
                 onChange={(value) => setFilters({ ...filters, stage: value })}
               />
-
-              <Dropdown
+              <PillDropdown
                 label="Typ wsparcia"
                 value={filters.supportType}
                 options={filterOptions.supportType}
                 onChange={(value) => setFilters({ ...filters, supportType: value })}
               />
-
-              {/* poprawiony label -> Lokalizacja */}
-              <Dropdown
-                label="Lokalizacja"
+              <PillDropdown
+                label="Etap rozwoju"
                 value={filters.location}
                 options={filterOptions.location}
                 onChange={(value) => setFilters({ ...filters, location: value })}
               />
             </div>
 
+            {/* Search 1:1 wygląd */}
             <div className="relative">
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Wyszukaj po nazwie..."
-                className="pl-10"
+                className="h-[35px] pr-10"
               />
-              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <SearchIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#2f6d8c]" />
             </div>
           </div>
 
