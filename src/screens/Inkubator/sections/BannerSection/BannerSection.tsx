@@ -82,57 +82,57 @@ type Filters = {
 
 /* ====== DEMO dane ====== */
 const ALL_ORGS: Org[] = [
-  // Startupy
+  // Startupy (mniej podmiotów)
   {
     id: 1,
-    name: "Play.air",
+    name: "Polska Nagroda Innowacyjności 2021",
     logo: "/rectangle-4174-14.png",
     category: "Startup",
-    stage: "Startup B",
+    stage: "MedTech",
     supportTypes: "Inkubator",
     location: "Warszawa",
     coords: [52.2297, 21.0122],
-    description: "Innowacyjna platforma dla branży lotniczej"
+    description: "Startup B"
   },
   {
     id: 2,
-    name: "OpenGrant",
+    name: "Play.air",
     logo: "/rectangle-4174-19.png",
     category: "Startup",
-    stage: "Pre-seed",
+    stage: "MedTech",
     supportTypes: "Finansowanie",
-    location: "Kraków",
-    coords: [50.0647, 19.945],
-    description: "Platforma do zarządzania grantami"
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Startup B"
   },
   {
     id: 3,
-    name: "Gridaly",
+    name: "Upmedic",
     logo: "/rectangle-4174-19.png",
     category: "Startup",
-    stage: "Seed",
+    stage: "MedTech",
     supportTypes: "Akceleracja",
-    location: "Poznań",
-    coords: [52.4064, 16.9252],
-    description: "Rozwiązania energetyczne"
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Startup B"
   },
   {
     id: 4,
-    name: "Binderless",
-    logo: "/rectangle-4176-2.png",
+    name: "Gridaly",
+    logo: "/rectangle-4174-19.png",
     category: "Startup",
-    stage: "Early stage",
+    stage: "MedTech",
     supportTypes: "Inkubacja",
-    location: "Gdańsk",
-    coords: [54.352, 18.6466],
-    description: "Technologie materiałowe"
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Startup B"
   },
   
-  // Firmy (Partner Korporacyjny)
+  // Firmy (Partner Korporacyjny - więcej podmiotów)
   {
     id: 5,
     name: "Orange Polska",
-    logo: "/rectangle-4174-19.png",
+    logo: "/rectangle-4174-4.png",
     category: "Firma",
     stage: "Pre seed, Seed +2",
     supportTypes: "8 typów wsparcia",
@@ -143,7 +143,7 @@ const ALL_ORGS: Org[] = [
   {
     id: 6,
     name: "Ciech Ventures",
-    logo: "/rectangle-4174-19.png",
+    logo: "/rectangle-4176-1.png",
     category: "Firma",
     stage: "Seed +2",
     supportTypes: "5 typów wsparcia",
@@ -153,8 +153,8 @@ const ALL_ORGS: Org[] = [
   },
   {
     id: 7,
-    name: "BNP Paribas Polska",
-    logo: "/rectangle-4174-19.png",
+    name: "HR Marketplace (eRecruiter)",
+    logo: "/rectangle-4176-2.png",
     category: "Firma",
     stage: "Seed +2",
     supportTypes: "8 typów wsparcia",
@@ -164,8 +164,8 @@ const ALL_ORGS: Org[] = [
   },
   {
     id: 8,
-    name: "PZU",
-    logo: "/rectangle-4174-19.png",
+    name: "Future Mind",
+    logo: "/rectangle-4176-3.png",
     category: "Firma",
     stage: "Seed +3",
     supportTypes: "7 typów wsparcia",
@@ -175,8 +175,8 @@ const ALL_ORGS: Org[] = [
   },
   {
     id: 9,
-    name: "Maspex",
-    logo: "/rectangle-4174-19.png",
+    name: "BNP Paribas Polska",
+    logo: "/rectangle-4176-4.png",
     category: "Firma",
     stage: "Seed, Early stage",
     supportTypes: "6 typów wsparcia",
@@ -186,11 +186,231 @@ const ALL_ORGS: Org[] = [
   },
   {
     id: 10,
-    name: "Bank Pekao S.A.",
-    logo: "/rectangle-4174-19.png",
+    name: "PZU",
+    logo: "/rectangle-4174-4.png",
     category: "Firma",
     stage: "Seed, Early stage",
     supportTypes: "8 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 11,
+    name: "Transcom",
+    logo: "/rectangle-4176-1.png",
+    category: "Firma",
+    stage: "Seed, Early stage",
+    supportTypes: "5 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 12,
+    name: "Maspex",
+    logo: "/rectangle-4176-2.png",
+    category: "Firma",
+    stage: "Seed, Early stage",
+    supportTypes: "6 typów wsparcia",
+    location: "Kraków",
+    coords: [50.0647, 19.945],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 13,
+    name: "Veolia",
+    logo: "/rectangle-4176-3.png",
+    category: "Firma",
+    stage: "Seed +2",
+    supportTypes: "7 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 14,
+    name: "Tauron Polska Energia",
+    logo: "/rectangle-4176-4.png",
+    category: "Firma",
+    stage: "Seed, Early stage",
+    supportTypes: "6 typów wsparcia",
+    location: "Katowice",
+    coords: [50.2649, 19.0238],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 15,
+    name: "ORLEN Skylight Accelerator",
+    logo: "/rectangle-4174-4.png",
+    category: "Firma",
+    stage: "Idea stage +1",
+    supportTypes: "8 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 16,
+    name: "Ringier Axel Springer",
+    logo: "/rectangle-4176-1.png",
+    category: "Firma",
+    stage: "Seed +2",
+    supportTypes: "7 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 17,
+    name: "Grupa Azoty",
+    logo: "/rectangle-4176-2.png",
+    category: "Firma",
+    stage: "Seed, Early stage",
+    supportTypes: "6 typów wsparcia",
+    location: "Tarnów",
+    coords: [50.0135, 20.9859],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 18,
+    name: "PGE Ventures",
+    logo: "/rectangle-4176-3.png",
+    category: "Firma",
+    stage: "Seed +2",
+    supportTypes: "6 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 19,
+    name: "Instytut Matki i Dziecka",
+    logo: "/rectangle-4176-4.png",
+    category: "Firma",
+    stage: "Early stage",
+    supportTypes: "7 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 20,
+    name: "InPost",
+    logo: "/rectangle-4174-4.png",
+    category: "Firma",
+    stage: "Seed, Early stage",
+    supportTypes: "5 typów wsparcia",
+    location: "Kraków",
+    coords: [50.0647, 19.945],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 21,
+    name: "ORLEN VS",
+    logo: "/rectangle-4176-1.png",
+    category: "Firma",
+    stage: "Seed +3",
+    supportTypes: "6 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 22,
+    name: "Saint-Gobain",
+    logo: "/rectangle-4176-2.png",
+    category: "Firma",
+    stage: "Seed +3",
+    supportTypes: "8 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 23,
+    name: "Totalizator Sportowy",
+    logo: "/rectangle-4176-3.png",
+    category: "Firma",
+    stage: "Pre-seed, Seed",
+    supportTypes: "7 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 24,
+    name: "Bank Pekao S.A.",
+    logo: "/rectangle-4176-4.png",
+    category: "Firma",
+    stage: "Seed, Early stage",
+    supportTypes: "8 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 25,
+    name: "Neuca",
+    logo: "/rectangle-4174-4.png",
+    category: "Firma",
+    stage: "Seed, Early stage",
+    supportTypes: "6 typów wsparcia",
+    location: "Poznań",
+    coords: [52.4064, 16.9252],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 26,
+    name: "Rossmann",
+    logo: "/rectangle-4176-1.png",
+    category: "Firma",
+    stage: "Early stage",
+    supportTypes: "5 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 27,
+    name: "Żabka",
+    logo: "/rectangle-4176-2.png",
+    category: "Firma",
+    stage: "Pre-seed +2",
+    supportTypes: "7 typów wsparcia",
+    location: "Poznań",
+    coords: [52.4064, 16.9252],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 28,
+    name: "Citi Handlowy",
+    logo: "/rectangle-4176-3.png",
+    category: "Firma",
+    stage: "Seed +3",
+    supportTypes: "8 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 29,
+    name: "Novartis",
+    logo: "/rectangle-4176-4.png",
+    category: "Firma",
+    stage: "Seed +3",
+    supportTypes: "9 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 30,
+    name: "Astra Zeneca",
+    logo: "/rectangle-4174-4.png",
+    category: "Firma",
+    stage: "Seed +3",
+    supportTypes: "9 typów wsparcia",
     location: "Warszawa",
     coords: [52.2297, 21.0122],
     description: "Partner Korporacyjny"
@@ -294,109 +514,6 @@ const Dropdown: React.FC<{
   );
 };
 
-/* ====== Contact Form ====== */
-const ContactForm: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    gdprConsent: false
-  });
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newErrors: {[key: string]: string} = {};
-    
-    if (!formData.name.trim()) {
-      newErrors.name = "To pole jest wymagane";
-    }
-    
-    if (!formData.email.trim()) {
-      newErrors.email = "To pole jest wymagane";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Nieprawidłowy format email";
-    }
-    
-    if (!formData.gdprConsent) {
-      newErrors.gdpr = "Błąd przetwarzania danych. Spróbuj ponownie.";
-    }
-    
-    setErrors(newErrors);
-    
-    if (Object.keys(newErrors).length === 0) {
-      console.log("Form submitted:", formData);
-      // Handle form submission
-    }
-  };
-
-  return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-      <div className="mb-4">
-        <p className="text-gray-700 text-sm leading-relaxed">
-          Chcesz zaktualizować dane lub dodać nową organizację?
-        </p>
-      </div>
-      
-      <Button 
-        variant="outline" 
-        className="w-full mb-4 py-3 text-[#1B7BA7] border-[#1B7BA7] hover:bg-[#1B7BA7]/5"
-      >
-        Wypełnij formularz
-      </Button>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Imię i nazwisko <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="text"
-            placeholder="Wpisz swoje imię i nazwisko..."
-            value={formData.name}
-            onChange={(e) => setFormData({...formData, name: e.target.value})}
-            className={errors.name ? "border-red-500" : ""}
-          />
-          {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Adres e-mail <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="email"
-            placeholder="np. imie.nazwisko@gmail.com"
-            value={formData.email}
-            onChange={(e) => setFormData({...formData, email: e.target.value})}
-            className={errors.email ? "border-red-500" : ""}
-          />
-          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-        </div>
-        
-        <div className="flex items-start gap-3">
-          <input
-            type="checkbox"
-            id="gdpr"
-            checked={formData.gdprConsent}
-            onChange={(e) => setFormData({...formData, gdprConsent: e.target.checked})}
-            className="mt-1 w-4 h-4 text-[#1B7BA7] border-gray-300 rounded focus:ring-[#1B7BA7]"
-          />
-          <label htmlFor="gdpr" className="text-sm text-gray-600">
-            Przetwarzanie danych jakieś RODO?
-          </label>
-        </div>
-        {errors.gdpr && <p className="text-red-500 text-xs">{errors.gdpr}</p>}
-        
-        <Button 
-          type="submit"
-          className="w-full py-3 bg-[#1B7BA7] text-white hover:bg-[#1B7BA7]/90"
-        >
-          Wyślij i zobacz dane →
-        </Button>
-      </form>
-    </div>
-  );
-};
 
 /* =========================
    GŁÓWNY KOMPONENT
@@ -471,7 +588,20 @@ const BannerSection: React.FC = () => {
             
             {/* Prawa strona - formularz */}
             <div className="w-full lg:w-96">
-              <ContactForm />
+              <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                <div className="mb-4">
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    Chcesz zaktualizować dane lub dodać nową organizację?
+                  </p>
+                </div>
+                
+                <Button 
+                  variant="outline" 
+                  className="w-full py-3 text-[#1B7BA7] border-[#1B7BA7] hover:bg-[#1B7BA7]/5"
+                >
+                  Wypełnij formularz
+                </Button>
+              </div>
             </div>
           </div>
         </div>
