@@ -2,20 +2,72 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L, { LatLngExpression, Map as LeafletMap } from "leaflet";
-
+import "leaflet/dist/leaflet.css";
 import {
-  ArrowRightIcon,
-  CheckIcon,
-  ChevronDownIcon,
-  SearchIcon,
-  XIcon,
+  ArrowRight as ArrowRightIcon,
+  Check as CheckIcon,
+  ChevronDown as ChevronDownIcon,
+  Search as SearchIcon,
+  X as XIcon,
 } from "lucide-react";
 
-import { Badge } from "../../../../components/ui/badge";
-import { Button } from "../../../../components/ui/button";
-import { Card, CardContent } from "../../../../components/ui/card";
-import { Input } from "../../../../components/ui/input";
-import { ScrollArea } from "../../../../components/ui/scroll-area";
+/* =========================
+   Mini UI (lokalne, 1 plik)
+   ========================= */
+const cn = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(" ");
+
+const Button: React.FC<
+  React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "ghost" | "solid" }
+> = ({ className, variant = "solid", ...props }) => (
+  <button
+    {...props}
+    className={cn(
+      "inline-flex items-center justify-center rounded-lg transition-colors",
+      variant === "solid"
+        ? "bg-uiblue text-white hover:bg-uiblue/90"
+        : "bg-transparent hover:bg-black/5",
+      className
+    )}
+  />
+);
+
+const Badge: React.FC<React.HTMLAttributes<HTMLSpanElement>> = ({ className, ...p }) => (
+  <span
+    {...p}
+    className={cn(
+      "inline-flex items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-semibold",
+      className
+    )}
+  />
+);
+
+const Card: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...p }) => (
+  <div {...p} className={cn("bg-white border border-slate-200 rounded-xl", className)} />
+);
+
+const CardContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+  className,
+  ...p
+}) => <div {...p} className={cn("p-4", className)} />;
+
+const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
+  ({ className, ...p }, ref) => (
+    <input
+      ref={ref}
+      {...p}
+      className={cn(
+        "h-10 w-full rounded-[10px] border outline-none focus:ring-2 focus:ring-uiblue/30",
+        className
+      )}
+    />
+  )
+);
+Input.displayName = "Input";
+
+const ScrollArea: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+  className,
+  ...p
+}) => <div {...p} className={cn("overflow-y-auto", className)} />;
 
 /* ====== typy ====== */
 type Org = {
@@ -47,7 +99,7 @@ const FILTER_OPTIONS = {
   stage: ["Proof of Concept", "Pre-seed", "Seed", "Series A"] as Org["stage"][],
 };
 
-/* ====== DEMO dane ====== */
+/* ====== DEMO dane (ikony/logotypy podmień wg potrzeb) ====== */
 const ALL_ORGS: Org[] = [
   {
     id: 1,
@@ -166,8 +218,130 @@ const FlyToSelected: React.FC<{ coords?: LatLngExpression | null }> = ({ coords 
   return null;
 };
 
-/* ====== komponent ====== */
-export const BannerSection = (): JSX.Element => {
+/* ====== fitBounds ====== */
+const FitBoundsSimple: React.FC<{
+  bounds: L.LatLngBounds;
+  mapRef: React.MutableRefObject<LeafletMap | null>;
+}> = ({ bounds, mapRef }) => {
+  useEffect(() => {
+    const map = mapRef.current;
+    if (map && bounds) {
+      map.fitBounds(bounds, { padding: [32, 32] } as any);
+    }
+  }, [bounds, mapRef]);
+  return null;
+};
+
+/* ====== małe meta ====== */
+const Meta = ({ label, value }: { label: string; value: string }) => (
+  <div className="inline-flex items-center gap-1 sm:gap-2">
+    <span className="opacity-50 font-body-body-3 text-ui-black text-xs">{label}</span>
+    <span className="font-body-body-3 text-ui-black text-xs">{value}</span>
+  </div>
+);
+
+const MetaCol = ({ label, value }: { label: string; value: string }) => (
+  <div>
+    <div className="opacity-50 font-body-body-3 text-ui-black text-xs">{label}</div>
+    <div className="font-body-body-3 text-ui-black text-xs">{value}</div>
+  </div>
+);
+
+/* ====== Multi chip dropdown ====== */
+function DropdownChipMulti<T extends string>({
+  label,
+  value,
+  options,
+  open,
+  onOpen,
+  onToggle,
+  onClear,
+}: {
+  label: string;
+  value: T[];
+  options: readonly T[];
+  open: boolean;
+  onOpen: () => void;
+  onToggle: (opt: T) => void;
+  onClear: () => void;
+}) {
+  const hasAny = value.length > 0;
+  const summary =
+    hasAny ? (value.length <= 2 ? value.join(", ") : `${value[0]}, +${value.length - 1}`) : "";
+
+  return (
+    <div className="relative">
+      <Button
+        variant="ghost"
+        onClick={onOpen}
+        className={cn(
+          hasAny ? "bg-[#d4e9f6]" : "bg-[#e9f4fa]",
+          "h-[35px] px-2 sm:px-2.5 py-3.5 rounded-2xl hover:opacity-80 flex items-center gap-1 w-full lg:w-auto justify-start"
+        )}
+      >
+        {hasAny && (
+          <Badge className="w-4 h-4 bg-ui-dark-blue text-white rounded-full p-0 flex items-center justify-center">
+            {value.length}
+          </Badge>
+        )}
+        <span className="[font-family:'Raleway',Helvetica] font-medium text-ui-black text-xs sm:text-sm tracking-[-0.28px] leading-[21px] truncate">
+          {label}
+          <span className="hidden sm:inline">{hasAny ? `: ${summary}` : ""}</span>
+        </span>
+        <ChevronDownIcon className="w-4 h-4" />
+      </Button>
+
+      {open && (
+        <div className="absolute z-20 mt-2 w-full sm:w-60 bg-white border border-[#b7d3e0] rounded-xl shadow-[0_12px_30px_rgba(15,85,117,0.18)] p-2">
+          <div className="flex items-center justify-between px-2 pb-2">
+            <span className="text-xs text-ui-black/70">Zaznacz wiele</span>
+            <button onClick={onClear} className="text-xs text-ui-dark-blue hover:underline">
+              Wyczyść
+            </button>
+          </div>
+          <div className="my-[2px] h-px bg-[#e6eef3]" />
+          {options.map((opt) => {
+            const active = value.includes(opt as T);
+            return (
+              <button
+                key={opt as string}
+                onClick={() => onToggle(opt as T)}
+                className="w-full flex items-center gap-2 text-left px-2 py-1.5 rounded hover:bg-uiblue-tint text-sm"
+              >
+                <span
+                  className={cn(
+                    "inline-flex w-4 h-4 items-center justify-center rounded-[4px] border",
+                    active ? "bg-ui-dark-blue border-ui-dark-blue text-white" : "border-[#b7d3e0]"
+                  )}
+                >
+                  {active ? <CheckIcon className="w-3 h-3" /> : null}
+                </span>
+                <span className={cn(active && "font-semibold text-ui-dark-blue")}>{opt}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ====== helpers ====== */
+function toggleMulti<T extends keyof MultiFilters>(
+  f: MultiFilters,
+  key: T,
+  opt: NonNullable<MultiFilters[T]>[number]
+): MultiFilters {
+  const current = (f[key] ?? []) as string[];
+  const exists = current.includes(opt as string);
+  const next = exists ? current.filter((x) => x !== opt) : [...current, opt as string];
+  return { ...f, [key]: next.length ? (next as any) : undefined };
+}
+
+/* =========================
+   GŁÓWNY KOMPONENT (1 plik)
+   ========================= */
+const BannerSection: React.FC = () => {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [showMobileList, setShowMobileList] = useState(false);
@@ -184,19 +358,10 @@ export const BannerSection = (): JSX.Element => {
     const q = query.trim().toLowerCase();
     return ALL_ORGS.filter((o) => {
       const byQ = !q || o.name.toLowerCase().includes(q);
-
-      const byOrgType =
-        !filters.orgType?.length || filters.orgType.includes(o.orgType);
-
-      const byIndustry =
-        !filters.industry?.length || filters.industry.includes(o.industry);
-
-      const bySupport =
-        !filters.supportType?.length || filters.supportType.includes(o.supportType);
-
-      const byStage =
-        !filters.stage?.length || filters.stage.includes(o.stage);
-
+      const byOrgType = !filters.orgType?.length || filters.orgType.includes(o.orgType);
+      const byIndustry = !filters.industry?.length || filters.industry.includes(o.industry);
+      const bySupport = !filters.supportType?.length || filters.supportType.includes(o.supportType);
+      const byStage = !filters.stage?.length || filters.stage.includes(o.stage);
       return byQ && byOrgType && byIndustry && bySupport && byStage;
     });
   }, [query, filters]);
@@ -210,45 +375,38 @@ export const BannerSection = (): JSX.Element => {
 
   return (
     <section className="flex flex-col w-full items-center pt-[60px] pb-0 px-0">
-      {/* Header */}
-      {/* Nagłówek nad mapą – jak na screenie */}
+      {/* Nagłówek */}
       <div className="w-full">
         <div className="max-w-[1180px] mx-auto">
           <div className="pl-4 sm:pl-8 lg:pl-[72px] pt-6 pb-4">
-      <div className="text-uiblue font-section-name font-[number:var(--section-name-font-weight)] text-[length:var(--section-name-font-size)] tracking-[var(--section-name-letter-spacing)] leading-[var(--section-name-line-height)] [font-style:var(--section-name-font-style)]">
-        MAPA EKOSYSTEMU
-      </div>
-
+            <div className="text-uiblue font-section-name font-[number:var(--section-name-font-weight)] text-[length:var(--section-name-font-size)] tracking-[var(--section-name-letter-spacing)] leading-[var(--section-name-line-height)] [font-style:var(--section-name-font-style)]">
+              MAPA EKOSYSTEMU
+            </div>
             <h2 className="mt-2 text-ui-black font-header-h2 font-[number:var(--header-h2-font-weight)] text-xl sm:text-2xl lg:text-[length:var(--header-h2-font-size)] tracking-[var(--header-h2-letter-spacing)] leading-[var(--header-h2-line-height)] [font-style:var(--header-h2-font-style)]">
-        Odkryj Polski Ekosystem
-        <br />
-        Startupowy
-      </h2>
+              Odkryj Polski Ekosystem
+              <br />
+              Startupowy
+            </h2>
           </div>
         </div>
       </div>
 
-      {/* Mobile toggle button */}
+      {/* Przycisk mobile */}
       <div className="lg:hidden w-full px-4 mb-4">
-        <Button
-          onClick={() => setShowMobileList(!showMobileList)}
-          className="w-full h-[48px] bg-uiblue text-white hover:bg-uiblue/90"
-        >
-          {showMobileList ? 'Pokaż mapę' : 'Pokaż listę podmiotów'}
+        <Button onClick={() => setShowMobileList(!showMobileList)} className="w-full h-[48px] bg-uiblue text-white hover:bg-uiblue/90">
+          {showMobileList ? "Pokaż mapę" : "Pokaż listę podmiotów"}
         </Button>
       </div>
 
       {/* MAPA + LISTA */}
       <div className="w-full h-[400px] sm:h-[600px] lg:h-[851px] flex flex-col lg:flex-row">
         {/* Mapa */}
-        <div className={`relative flex-1 ${showMobileList ? 'hidden lg:block' : 'block'}`}>
-          <style>
-            {`
-              .leaflet-popup.leaflet-custom-popup .leaflet-popup-tip{display:none;}
-              .leaflet-popup.leaflet-custom-popup .leaflet-popup-content-wrapper{background:transparent;box-shadow:none;border:none;padding:0;}
-              .leaflet-popup.leaflet-custom-popup .leaflet-popup-content{margin:0;}
-            `}
-          </style>
+        <div className={cn("relative flex-1", showMobileList ? "hidden lg:block" : "block")}>
+          <style>{`
+            .leaflet-popup.leaflet-custom-popup .leaflet-popup-tip{display:none;}
+            .leaflet-popup.leaflet-custom-popup .leaflet-popup-content-wrapper{background:transparent;box-shadow:none;border:none;padding:0;}
+            .leaflet-popup.leaflet-custom-popup .leaflet-popup-content{margin:0;}
+          `}</style>
 
           <MapContainer
             whenCreated={(m) => (mapRef.current = m)}
@@ -260,10 +418,7 @@ export const BannerSection = (): JSX.Element => {
             scrollWheelZoom
             preferCanvas
           >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-              attribution="&copy; OpenStreetMap contributors"
-            />
+            <TileLayer url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
 
             <FlyToSelected coords={selectedOrg?.coords ?? null} />
             {bounds && <FitBoundsSimple bounds={bounds} mapRef={mapRef} />}
@@ -277,15 +432,8 @@ export const BannerSection = (): JSX.Element => {
               />
             ))}
 
-            {/* Popup tylko po kliknięciu */}
             {selectedOrg && (
-              <Popup
-                position={selectedOrg.coords}
-                offset={[0, 16]}
-                closeButton={false}
-                autoPan
-                className="leaflet-custom-popup"
-              >
+              <Popup position={selectedOrg.coords} offset={[0, 16]} closeButton={false} autoPan className="leaflet-custom-popup">
                 <div className="w-[360px] rounded-2xl bg-white border border-[#b7d3e0] shadow-[0_12px_30px_rgba(15,85,117,0.18)] overflow-hidden">
                   <div className="flex items-center gap-2 px-3 py-2 bg-uiblue-tint border-b border-[#b7d3e0]">
                     <img src={selectedOrg.logo} alt="" className="w-6 h-5 object-contain rounded" />
@@ -323,7 +471,12 @@ export const BannerSection = (): JSX.Element => {
         </div>
 
         {/* Panel listy */}
-        <aside className={`w-full lg:w-[430px] h-full bg-white shadow-[-4px_0px_10px_#0f557526] ${showMobileList ? 'block' : 'hidden lg:block'}`}>
+        <aside
+          className={cn(
+            "w-full lg:w-[430px] h-full bg-white shadow-[-4px_0px_10px_#0f557526]",
+            showMobileList ? "block" : "hidden lg:block"
+          )}
+        >
           <header className="flex items-center gap-2.5 px-4 py-2 bg-uiblue-tint">
             <h3 className="font-header-h4 text-ui-dark-blue">Lista podmiotów</h3>
           </header>
@@ -341,12 +494,8 @@ export const BannerSection = (): JSX.Element => {
                 options={FILTER_OPTIONS.orgType}
                 open={open === "orgType"}
                 onOpen={() => setOpen(open === "orgType" ? null : "orgType")}
-                onToggle={(opt) =>
-                  setFilters((f) => toggleMulti(f, "orgType", opt))
-                }
-                onClear={() =>
-                  setFilters((f) => ({ ...f, orgType: undefined }))
-                }
+                onToggle={(opt) => setFilters((f) => toggleMulti(f, "orgType", opt))}
+                onClear={() => setFilters((f) => ({ ...f, orgType: undefined }))}
               />
 
               <DropdownChipMulti
@@ -355,12 +504,8 @@ export const BannerSection = (): JSX.Element => {
                 options={FILTER_OPTIONS.industry}
                 open={open === "industry"}
                 onOpen={() => setOpen(open === "industry" ? null : "industry")}
-                onToggle={(opt) =>
-                  setFilters((f) => toggleMulti(f, "industry", opt))
-                }
-                onClear={() =>
-                  setFilters((f) => ({ ...f, industry: undefined }))
-                }
+                onToggle={(opt) => setFilters((f) => toggleMulti(f, "industry", opt))}
+                onClear={() => setFilters((f) => ({ ...f, industry: undefined }))}
               />
 
               <DropdownChipMulti
@@ -369,12 +514,8 @@ export const BannerSection = (): JSX.Element => {
                 options={FILTER_OPTIONS.supportType}
                 open={open === "supportType"}
                 onOpen={() => setOpen(open === "supportType" ? null : "supportType")}
-                onToggle={(opt) =>
-                  setFilters((f) => toggleMulti(f, "supportType", opt))
-                }
-                onClear={() =>
-                  setFilters((f) => ({ ...f, supportType: undefined }))
-                }
+                onToggle={(opt) => setFilters((f) => toggleMulti(f, "supportType", opt))}
+                onClear={() => setFilters((f) => ({ ...f, supportType: undefined }))}
               />
 
               <DropdownChipMulti
@@ -383,12 +524,8 @@ export const BannerSection = (): JSX.Element => {
                 options={FILTER_OPTIONS.stage}
                 open={open === "stage"}
                 onOpen={() => setOpen(open === "stage" ? null : "stage")}
-                onToggle={(opt) =>
-                  setFilters((f) => toggleMulti(f, "stage", opt))
-                }
-                onClear={() =>
-                  setFilters((f) => ({ ...f, stage: undefined }))
-                }
+                onToggle={(opt) => setFilters((f) => toggleMulti(f, "stage", opt))}
+                onClear={() => setFilters((f) => ({ ...f, stage: undefined }))}
               />
             </div>
 
@@ -412,21 +549,31 @@ export const BannerSection = (): JSX.Element => {
                   <Card
                     key={org.id}
                     onClick={() => setSelectedId(org.id)}
-                    className={`w-full rounded-none border-0 border-t border-[#b7d3e0] ${
+                    className={cn(
+                      "w-full rounded-none border-0 border-t border-[#b7d3e0] hover:bg-uiblue-tint cursor-pointer",
                       isSelected ? "bg-uiblue-tint" : "bg-white"
-                    } hover:bg-uiblue-tint cursor-pointer`}
+                    )}
                   >
                     <CardContent className="flex flex-col gap-1 px-4 py-2">
                       <div className="flex items-center gap-2">
-                        <img className="w-16 sm:w-20 h-6 sm:h-8 object-contain" alt={`${org.name} logo`} src={org.logo} />
+                        <img
+                          className="w-16 sm:w-20 h-6 sm:h-8 object-contain"
+                          alt={`${org.name} logo`}
+                          src={org.logo}
+                        />
                         <div
-                          className={`text-xs sm:text-sm flex-1 [font-family:'Montserrat',Helvetica] font-semibold ${
+                          className={cn(
+                            "text-xs sm:text-sm flex-1 [font-family:'Montserrat',Helvetica] font-semibold",
                             isSelected ? "text-uiblue" : "text-ui-black"
-                          }`}
+                          )}
                         >
                           {org.name}
                         </div>
-                        {isSelected ? <CheckIcon className="w-4 h-4" /> : <ArrowRightIcon className="w-4 h-4" />}
+                        {isSelected ? (
+                          <CheckIcon className="w-4 h-4" />
+                        ) : (
+                          <ArrowRightIcon className="w-4 h-4" />
+                        )}
                       </div>
 
                       <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-end gap-1 sm:gap-[2px_12px]">
@@ -444,124 +591,21 @@ export const BannerSection = (): JSX.Element => {
           </ScrollArea>
         </aside>
       </div>
+
+      {/* Blok dodat. – dokładne odwzorowanie figma panelu po prawej */}
+      <style>{`
+        /* Wyciąg z CSS z Figmy dla panelu listy – trzymamy w jednym pliku */
+        .shadow-card-shadow { box-shadow: 0 12px 30px rgba(15, 85, 117, 0.18) }
+        .text-ui-black { color:#080E14 }
+        .text-ui-dark-blue { color:#0F5575 }
+        .text-uiblue { color:#4EBFEE }
+        .bg-uiblue-tint { background:#F5FAFD }
+        .bg-uiblue { background:#0F5575 } /* przycisk */
+        /* panel z Figmy:
+           width: 430px; separator/border #B8D4E0; cień -4px 0 10px rgba(15,85,117,.15) */
+      `}</style>
     </section>
   );
 };
 
-/* ====== Multi chip dropdown ====== */
-function DropdownChipMulti<T extends string>({
-  label,
-  value,
-  options,
-  open,
-  onOpen,
-  onToggle,
-  onClear,
-}: {
-  label: string;
-  value: T[];                      // zaznaczone opcje
-  options: readonly T[];           // wszystkie opcje
-  open: boolean;
-  onOpen: () => void;              // toggle otwarcia
-  onToggle: (opt: T) => void;      // włącz/wyłącz opcję
-  onClear: () => void;             // wyczyść cały filtr
-}) {
-  const hasAny = value.length > 0;
-  const summary =
-    hasAny ? (value.length <= 2 ? value.join(", ") : `${value[0]}, +${value.length - 1}`) : "";
-
-  return (
-    <div className="relative">
-      <Button
-        variant="ghost"
-        onClick={onOpen}
-        className={`${hasAny ? "bg-[#d4e9f6]" : "bg-[#e9f4fa]"} h-[35px] px-2 sm:px-2.5 py-3.5 rounded-2xl hover:opacity-80 flex items-center gap-1 w-full lg:w-auto justify-start`}
-      >
-        {hasAny && (
-          <Badge className="w-4 h-4 bg-ui-dark-blue text-white text-[10px] rounded-full p-0 flex items-center justify-center">
-            {value.length}
-          </Badge>
-        )}
-        <span className="[font-family:'Raleway',Helvetica] font-medium text-ui-black text-xs sm:text-sm tracking-[-0.28px] leading-[21px] truncate">
-          {label}
-          <span className="hidden sm:inline">{hasAny ? `: ${summary}` : ""}</span>
-        </span>
-        <ChevronDownIcon className="w-4 h-4" />
-      </Button>
-
-      {open && (
-        <div className="absolute z-20 mt-2 w-full sm:w-60 bg-white border border-[#b7d3e0] rounded-xl shadow-card-shadow p-2">
-          <div className="flex items-center justify-between px-2 pb-2">
-            <span className="text-xs text-ui-black/70">Zaznacz wiele</span>
-            <button
-              onClick={onClear}
-              className="text-xs text-ui-dark-blue hover:underline"
-            >
-              Wyczyść
-            </button>
-          </div>
-          <div className="my-[2px] h-px bg-[#e6eef3]" />
-          {options.map((opt) => {
-            const active = value.includes(opt);
-            return (
-              <button
-                key={opt}
-                onClick={() => onToggle(opt)}
-                className={`w-full flex items-center gap-2 text-left px-2 py-1.5 rounded hover:bg-uiblue-tint text-sm`}
-              >
-                <span
-                  className={`inline-flex w-4 h-4 items-center justify-center rounded-[4px] border ${
-                    active ? "bg-ui-dark-blue border-ui-dark-blue text-white" : "border-[#b7d3e0]"
-                  }`}
-                >
-                  {active ? <CheckIcon className="w-3 h-3" /> : null}
-                </span>
-                <span className={`${active ? "font-semibold text-ui-dark-blue" : ""}`}>{opt}</span>
-              </button>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ====== helpers ====== */
-function toggleMulti<T extends keyof MultiFilters>(
-  f: MultiFilters,
-  key: T,
-  opt: NonNullable<MultiFilters[T]>[number]
-): MultiFilters {
-  const current = (f[key] ?? []) as string[];
-  const exists = current.includes(opt as string);
-  const next = exists ? current.filter((x) => x !== opt) : [...current, opt as string];
-  return { ...f, [key]: next.length ? (next as any) : undefined };
-}
-
-const Meta = ({ label, value }: { label: string; value: string }) => (
-  <div className="inline-flex items-center gap-1 sm:gap-2">
-    <span className="opacity-50 font-body-body-3 text-ui-black text-xs">{label}</span>
-    <span className="font-body-body-3 text-ui-black text-xs">{value}</span>
-  </div>
-);
-
-const MetaCol = ({ label, value }: { label: string; value: string }) => (
-  <div>
-    <div className="opacity-50 font-body-body-3 text-ui-black text-xs">{label}</div>
-    <div className="font-body-body-3 text-ui-black text-xs">{value}</div>
-  </div>
-);
-
-/* ====== fitBounds ====== */
-const FitBoundsSimple: React.FC<{
-  bounds: L.LatLngBounds;
-  mapRef: React.MutableRefObject<LeafletMap | null>;
-}> = ({ bounds, mapRef }) => {
-  useEffect(() => {
-    const map = mapRef.current;
-    if (map && bounds) {
-      map.fitBounds(bounds, { padding: [32, 32] } as any);
-    }
-  }, [bounds, mapRef]);
-  return null;
-};
+export default BannerSection;
