@@ -1,4 +1,4 @@
-// /src/screens/Inkubator/sections/BannerSection/BannerSection.tsx
+
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L, { LatLngExpression, Map as LeafletMap } from "leaflet";
@@ -609,3 +609,4 @@ const BannerSection: React.FC = () => {
 };
 
 export default BannerSection;
+export { BannerSection }
