@@ -869,7 +869,8 @@ const BannerSection: React.FC = () => {
                               )}
                             </div>
                             <div className="text-xs text-gray-600 space-y-1">
-                              <div>{org.stage} • {org.supportTypes}</div>
+                              <div>{org.stage}</div>
+                              <div>{org.supportTypes}</div>
                             </div>
                           </CardContent>
                         </Card>
