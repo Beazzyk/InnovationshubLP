@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L, { LatLngExpression, Map as LeafletMap } from "leaflet";
@@ -17,38 +16,21 @@ import {
 const cn = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(" ");
 
 const Button: React.FC<
-  React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "ghost" | "solid" }
+  React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "ghost" | "solid" | "outline" }
 > = ({ className, variant = "solid", ...props }) => (
   <button
     {...props}
     className={cn(
-      "inline-flex items-center justify-center rounded-lg transition-colors",
+      "inline-flex items-center justify-center rounded-lg transition-colors font-medium",
       variant === "solid"
-        ? "bg-uiblue text-white hover:bg-uiblue/90"
+        ? "bg-[#1B7BA7] text-white hover:bg-[#1B7BA7]/90"
+        : variant === "outline"
+        ? "border border-[#1B7BA7] text-[#1B7BA7] hover:bg-[#1B7BA7]/5"
         : "bg-transparent hover:bg-black/5",
       className
     )}
   />
 );
-
-const Badge: React.FC<React.HTMLAttributes<HTMLSpanElement>> = ({ className, ...p }) => (
-  <span
-    {...p}
-    className={cn(
-      "inline-flex items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-semibold",
-      className
-    )}
-  />
-);
-
-const Card: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...p }) => (
-  <div {...p} className={cn("bg-white border border-slate-200 rounded-xl", className)} />
-);
-
-const CardContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
-  className,
-  ...p
-}) => <div {...p} className={cn("p-4", className)} />;
 
 const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className, ...p }, ref) => (
@@ -56,13 +38,22 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
       ref={ref}
       {...p}
       className={cn(
-        "h-10 w-full rounded-[10px] border outline-none focus:ring-2 focus:ring-uiblue/30",
+        "w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-[#1B7BA7]/30 focus:border-[#1B7BA7]",
         className
       )}
     />
   )
 );
 Input.displayName = "Input";
+
+const Card: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...p }) => (
+  <div {...p} className={cn("bg-white border border-gray-200 rounded-lg", className)} />
+);
+
+const CardContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+  className,
+  ...p
+}) => <div {...p} className={cn("p-4", className)} />;
 
 const ScrollArea: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   className,
@@ -74,121 +65,136 @@ type Org = {
   id: number;
   name: string;
   logo: string;
-  orgType: "Startup" | "Scaleup";
-  industry: "SaaS" | "AI" | "Hardware";
-  supportType: "Inkubacja" | "Akceleracja" | "Finansowanie";
-  stage: "Proof of Concept" | "Pre-seed" | "Seed" | "Series A";
+  category: "Startup" | "Firma";
+  stage: string;
+  supportTypes: string;
   location: string;
   coords: LatLngExpression;
+  description?: string;
 };
 
-type MultiFilters = Partial<{
-  orgType: Org["orgType"][];
-  industry: Org["industry"][];
-  supportType: Org["supportType"][];
-  stage: Org["stage"][];
-}>;
-
-type OpenDropdown = keyof MultiFilters | null;
-
-/* ====== stałe filtrów ====== */
-const FILTER_OPTIONS = {
-  orgType: ["Startup", "Scaleup"] as Org["orgType"][],
-  industry: ["SaaS", "AI", "Hardware"] as Org["industry"][],
-  supportType: ["Inkubacja", "Akceleracja", "Finansowanie"] as Org["supportType"][],
-  stage: ["Proof of Concept", "Pre-seed", "Seed", "Series A"] as Org["stage"][],
+type Filters = {
+  category: string;
+  stage: string;
+  supportType: string;
+  location: string;
 };
 
-/* ====== DEMO dane (ikony/logotypy podmień wg potrzeb) ====== */
+/* ====== DEMO dane ====== */
 const ALL_ORGS: Org[] = [
+  // Startupy
   {
     id: 1,
     name: "Play.air",
     logo: "/rectangle-4174-14.png",
-    orgType: "Startup",
-    industry: "SaaS",
-    supportType: "Inkubacja",
-    stage: "Seed",
-    location: "Gdańsk",
-    coords: [54.352, 18.6466],
+    category: "Startup",
+    stage: "Startup B",
+    supportTypes: "Inkubator",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Innowacyjna platforma dla branży lotniczej"
   },
   {
     id: 2,
     name: "OpenGrant",
     logo: "/rectangle-4174-19.png",
-    orgType: "Startup",
-    industry: "AI",
-    supportType: "Finansowanie",
+    category: "Startup",
     stage: "Pre-seed",
-    location: "Lublin",
-    coords: [51.2465, 22.5684],
+    supportTypes: "Finansowanie",
+    location: "Kraków",
+    coords: [50.0647, 19.945],
+    description: "Platforma do zarządzania grantami"
   },
   {
     id: 3,
-    name: "NIRBY",
-    logo: "/rectangle-4176-3.png",
-    orgType: "Scaleup",
-    industry: "Hardware",
-    supportType: "Akceleracja",
-    stage: "Series A",
-    location: "Szczecin",
-    coords: [53.4285, 14.5528],
+    name: "Gridaly",
+    logo: "/rectangle-4174-19.png",
+    category: "Startup",
+    stage: "Seed",
+    supportTypes: "Akceleracja",
+    location: "Poznań",
+    coords: [52.4064, 16.9252],
+    description: "Rozwiązania energetyczne"
   },
   {
     id: 4,
     name: "Binderless",
     logo: "/rectangle-4176-2.png",
-    orgType: "Startup",
-    industry: "Hardware",
-    supportType: "Inkubacja",
-    stage: "Proof of Concept",
-    location: "Katowice",
-    coords: [50.2649, 19.0238],
+    category: "Startup",
+    stage: "Early stage",
+    supportTypes: "Inkubacja",
+    location: "Gdańsk",
+    coords: [54.352, 18.6466],
+    description: "Technologie materiałowe"
   },
+  
+  // Firmy (Partner Korporacyjny)
   {
     id: 5,
-    name: "Gridaly",
+    name: "Orange Polska",
     logo: "/rectangle-4174-19.png",
-    orgType: "Scaleup",
-    industry: "SaaS",
-    supportType: "Akceleracja",
-    stage: "Seed",
-    location: "Poznań",
-    coords: [52.4064, 16.9252],
+    category: "Firma",
+    stage: "Pre seed, Seed +2",
+    supportTypes: "8 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
   },
   {
     id: 6,
-    name: "Redstone Oracles",
+    name: "Ciech Ventures",
     logo: "/rectangle-4174-19.png",
-    orgType: "Startup",
-    industry: "AI",
-    supportType: "Finansowanie",
-    stage: "Series A",
-    location: "Wrocław",
-    coords: [51.1079, 17.0385],
+    category: "Firma",
+    stage: "Seed +2",
+    supportTypes: "5 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
   },
   {
     id: 7,
-    name: "Logoplan",
-    logo: "/rectangle-4174-4.png",
-    orgType: "Startup",
-    industry: "SaaS",
-    supportType: "Inkubacja",
-    stage: "Pre-seed",
+    name: "BNP Paribas Polska",
+    logo: "/rectangle-4174-19.png",
+    category: "Firma",
+    stage: "Seed +2",
+    supportTypes: "8 typów wsparcia",
     location: "Warszawa",
     coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
   },
   {
     id: 8,
-    name: "Calmsie",
-    logo: "/rectangle-4176-1.png",
-    orgType: "Scaleup",
-    industry: "AI",
-    supportType: "Akceleracja",
-    stage: "Seed",
+    name: "PZU",
+    logo: "/rectangle-4174-19.png",
+    category: "Firma",
+    stage: "Seed +3",
+    supportTypes: "7 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  },
+  {
+    id: 9,
+    name: "Maspex",
+    logo: "/rectangle-4174-19.png",
+    category: "Firma",
+    stage: "Seed, Early stage",
+    supportTypes: "6 typów wsparcia",
     location: "Kraków",
     coords: [50.0647, 19.945],
+    description: "Partner Korporacyjny"
   },
+  {
+    id: 10,
+    name: "Bank Pekao S.A.",
+    logo: "/rectangle-4174-19.png",
+    category: "Firma",
+    stage: "Seed, Early stage",
+    supportTypes: "8 typów wsparcia",
+    location: "Warszawa",
+    coords: [52.2297, 21.0122],
+    description: "Partner Korporacyjny"
+  }
 ];
 
 /* ====== marker z logiem ====== */
@@ -197,12 +203,12 @@ const logoIcon = (logoUrl: string, highlight = false) =>
     html: `
       <div style="
         width:${highlight ? 54 : 42}px;height:${highlight ? 54 : 42}px;
-        border-radius:9999px;background:#fff;
+        border-radius:50%;background:#fff;
         display:flex;align-items:center;justify-content:center;
-        box-shadow:0 6px 20px rgba(15,85,117,.25);
-        border:${highlight ? "3px solid #4EBFEE" : "1px solid #F5FAFD"};
+        box-shadow:0 4px 12px rgba(0,0,0,.15);
+        border:${highlight ? "3px solid #1B7BA7" : "2px solid #e5e7eb"};
       ">
-        <img src="${logoUrl}" style="width:80%;height:80%;object-fit:contain;border-radius:9999px;" />
+        <img src="${logoUrl}" style="width:70%;height:70%;object-fit:contain;border-radius:50%;" />
       </div>`,
     iconSize: [highlight ? 54 : 42, highlight ? 54 : 42],
     iconAnchor: [highlight ? 27 : 21, highlight ? 27 : 21],
@@ -232,137 +238,195 @@ const FitBoundsSimple: React.FC<{
   return null;
 };
 
-/* ====== małe meta ====== */
-const Meta = ({ label, value }: { label: string; value: string }) => (
-  <div className="inline-flex items-center gap-1 sm:gap-2">
-    <span className="opacity-50 font-body-body-3 text-ui-black text-xs">{label}</span>
-    <span className="font-body-body-3 text-ui-black text-xs">{value}</span>
-  </div>
-);
-
-const MetaCol = ({ label, value }: { label: string; value: string }) => (
-  <div>
-    <div className="opacity-50 font-body-body-3 text-ui-black text-xs">{label}</div>
-    <div className="font-body-body-3 text-ui-black text-xs">{value}</div>
-  </div>
-);
-
-/* ====== Multi chip dropdown ====== */
-function DropdownChipMulti<T extends string>({
-  label,
-  value,
-  options,
-  open,
-  onOpen,
-  onToggle,
-  onClear,
-}: {
+/* ====== Dropdown component ====== */
+const Dropdown: React.FC<{
   label: string;
-  value: T[];
-  options: readonly T[];
-  open: boolean;
-  onOpen: () => void;
-  onToggle: (opt: T) => void;
-  onClear: () => void;
-}) {
-  const hasAny = value.length > 0;
-  const summary =
-    hasAny ? (value.length <= 2 ? value.join(", ") : `${value[0]}, +${value.length - 1}`) : "";
-
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
+  placeholder?: string;
+}> = ({ label, value, options, onChange, placeholder = "Wszystkie" }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
   return (
     <div className="relative">
-      <Button
-        variant="ghost"
-        onClick={onOpen}
-        className={cn(
-          hasAny ? "bg-[#d4e9f6]" : "bg-[#e9f4fa]",
-          "h-[35px] px-2 sm:px-2.5 py-3.5 rounded-2xl hover:opacity-80 flex items-center gap-1 w-full lg:w-auto justify-start"
-        )}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 hover:border-[#1B7BA7] focus:outline-none focus:ring-2 focus:ring-[#1B7BA7]/30"
       >
-        {hasAny && (
-          <Badge className="w-4 h-4 bg-ui-dark-blue text-white rounded-full p-0 flex items-center justify-center">
-            {value.length}
-          </Badge>
-        )}
-        <span className="[font-family:'Raleway',Helvetica] font-medium text-ui-black text-xs sm:text-sm tracking-[-0.28px] leading-[21px] truncate">
-          {label}
-          <span className="hidden sm:inline">{hasAny ? `: ${summary}` : ""}</span>
+        <span className="flex items-center gap-2">
+          {label === "Typ organizacji" && (
+            <div className="w-5 h-5 bg-[#1B7BA7] rounded-full flex items-center justify-center">
+              <span className="text-white text-xs font-bold">2</span>
+            </div>
+          )}
+          <span>{value || placeholder}</span>
         </span>
-        <ChevronDownIcon className="w-4 h-4" />
-      </Button>
-
-      {open && (
-        <div className="absolute z-20 mt-2 w-full sm:w-60 bg-white border border-[#b7d3e0] rounded-xl shadow-[0_12px_30px_rgba(15,85,117,0.18)] p-2">
-          <div className="flex items-center justify-between px-2 pb-2">
-            <span className="text-xs text-ui-black/70">Zaznacz wiele</span>
-            <button onClick={onClear} className="text-xs text-ui-dark-blue hover:underline">
-              Wyczyść
+        <ChevronDownIcon className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      
+      {isOpen && (
+        <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
+          <button
+            onClick={() => {
+              onChange("");
+              setIsOpen(false);
+            }}
+            className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 first:rounded-t-lg"
+          >
+            {placeholder}
+          </button>
+          {options.map((option) => (
+            <button
+              key={option}
+              onClick={() => {
+                onChange(option);
+                setIsOpen(false);
+              }}
+              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 last:rounded-b-lg"
+            >
+              {option}
             </button>
-          </div>
-          <div className="my-[2px] h-px bg-[#e6eef3]" />
-          {options.map((opt) => {
-            const active = value.includes(opt as T);
-            return (
-              <button
-                key={opt as string}
-                onClick={() => onToggle(opt as T)}
-                className="w-full flex items-center gap-2 text-left px-2 py-1.5 rounded hover:bg-uiblue-tint text-sm"
-              >
-                <span
-                  className={cn(
-                    "inline-flex w-4 h-4 items-center justify-center rounded-[4px] border",
-                    active ? "bg-ui-dark-blue border-ui-dark-blue text-white" : "border-[#b7d3e0]"
-                  )}
-                >
-                  {active ? <CheckIcon className="w-3 h-3" /> : null}
-                </span>
-                <span className={cn(active && "font-semibold text-ui-dark-blue")}>{opt}</span>
-              </button>
-            );
-          })}
+          ))}
         </div>
       )}
     </div>
   );
-}
+};
 
-/* ====== helpers ====== */
-function toggleMulti<T extends keyof MultiFilters>(
-  f: MultiFilters,
-  key: T,
-  opt: NonNullable<MultiFilters[T]>[number]
-): MultiFilters {
-  const current = (f[key] ?? []) as string[];
-  const exists = current.includes(opt as string);
-  const next = exists ? current.filter((x) => x !== opt) : [...current, opt as string];
-  return { ...f, [key]: next.length ? (next as any) : undefined };
-}
+/* ====== Contact Form ====== */
+const ContactForm: React.FC = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    gdprConsent: false
+  });
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: {[key: string]: string} = {};
+    
+    if (!formData.name.trim()) {
+      newErrors.name = "To pole jest wymagane";
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = "To pole jest wymagane";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Nieprawidłowy format email";
+    }
+    
+    if (!formData.gdprConsent) {
+      newErrors.gdpr = "Błąd przetwarzania danych. Spróbuj ponownie.";
+    }
+    
+    setErrors(newErrors);
+    
+    if (Object.keys(newErrors).length === 0) {
+      console.log("Form submitted:", formData);
+      // Handle form submission
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+      <div className="mb-4">
+        <p className="text-gray-700 text-sm leading-relaxed">
+          Chcesz zaktualizować dane lub dodać nową organizację?
+        </p>
+      </div>
+      
+      <Button 
+        variant="outline" 
+        className="w-full mb-4 py-3 text-[#1B7BA7] border-[#1B7BA7] hover:bg-[#1B7BA7]/5"
+      >
+        Wypełnij formularz
+      </Button>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Imię i nazwisko <span className="text-red-500">*</span>
+          </label>
+          <Input
+            type="text"
+            placeholder="Wpisz swoje imię i nazwisko..."
+            value={formData.name}
+            onChange={(e) => setFormData({...formData, name: e.target.value})}
+            className={errors.name ? "border-red-500" : ""}
+          />
+          {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Adres e-mail <span className="text-red-500">*</span>
+          </label>
+          <Input
+            type="email"
+            placeholder="np. imie.nazwisko@gmail.com"
+            value={formData.email}
+            onChange={(e) => setFormData({...formData, email: e.target.value})}
+            className={errors.email ? "border-red-500" : ""}
+          />
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+        </div>
+        
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            id="gdpr"
+            checked={formData.gdprConsent}
+            onChange={(e) => setFormData({...formData, gdprConsent: e.target.checked})}
+            className="mt-1 w-4 h-4 text-[#1B7BA7] border-gray-300 rounded focus:ring-[#1B7BA7]"
+          />
+          <label htmlFor="gdpr" className="text-sm text-gray-600">
+            Przetwarzanie danych jakieś RODO?
+          </label>
+        </div>
+        {errors.gdpr && <p className="text-red-500 text-xs">{errors.gdpr}</p>}
+        
+        <Button 
+          type="submit"
+          className="w-full py-3 bg-[#1B7BA7] text-white hover:bg-[#1B7BA7]/90"
+        >
+          Wyślij i zobacz dane →
+        </Button>
+      </form>
+    </div>
+  );
+};
 
 /* =========================
-   GŁÓWNY KOMPONENT (1 plik)
+   GŁÓWNY KOMPONENT
    ========================= */
 const BannerSection: React.FC = () => {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [showMobileList, setShowMobileList] = useState(false);
-  const [filters, setFilters] = useState<MultiFilters>({});
-  const [open, setOpen] = useState<OpenDropdown>(null);
+  const [filters, setFilters] = useState<Filters>({
+    category: "",
+    stage: "",
+    supportType: "",
+    location: ""
+  });
 
   const selectedOrg = useMemo(
     () => (selectedId ? ALL_ORGS.find((o) => o.id === selectedId) || null : null),
     [selectedId]
   );
 
-  /* filtracja (multi) */
+  /* filtracja */
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return ALL_ORGS.filter((o) => {
       const byQ = !q || o.name.toLowerCase().includes(q);
-      const byOrgType = !filters.orgType?.length || filters.orgType.includes(o.orgType);
-      const byIndustry = !filters.industry?.length || filters.industry.includes(o.industry);
-      const bySupport = !filters.supportType?.length || filters.supportType.includes(o.supportType);
-      const byStage = !filters.stage?.length || filters.stage.includes(o.stage);
-      return byQ && byOrgType && byIndustry && bySupport && byStage;
+      const byCategory = !filters.category || o.category === filters.category;
+      const byStage = !filters.stage || o.stage.includes(filters.stage);
+      const bySupport = !filters.supportType || o.supportTypes.includes(filters.supportType);
+      const byLocation = !filters.location || o.location === filters.location;
+      return byQ && byCategory && byStage && bySupport && byLocation;
     });
   }, [query, filters]);
 
@@ -373,33 +437,58 @@ const BannerSection: React.FC = () => {
 
   const mapRef = useRef<LeafletMap | null>(null);
 
+  // Grupowanie według kategorii
+  const groupedOrgs = useMemo(() => {
+    const startups = filtered.filter(org => org.category === "Startup");
+    const companies = filtered.filter(org => org.category === "Firma");
+    return { startups, companies };
+  }, [filtered]);
+
+  // Opcje dla dropdownów
+  const filterOptions = {
+    category: ["Startup", "Firma"],
+    stage: ["Pre-seed", "Seed", "Early stage", "Startup B"],
+    supportType: ["Inkubator", "Akceleracja", "Finansowanie"],
+    location: ["Warszawa", "Kraków", "Poznań", "Gdańsk"]
+  };
+
   return (
     <section className="flex flex-col w-full items-center pt-[60px] pb-0 px-0">
-      {/* Nagłówek */}
-      <div className="w-full">
-        <div className="max-w-[1180px] mx-auto">
-          <div className="pl-4 sm:pl-8 lg:pl-[72px] pt-6 pb-4">
-            <div className="text-uiblue font-section-name font-[number:var(--section-name-font-weight)] text-[length:var(--section-name-font-size)] tracking-[var(--section-name-letter-spacing)] leading-[var(--section-name-line-height)] [font-style:var(--section-name-font-style)]">
-              MAPA EKOSYSTEMU
+      {/* Nagłówek z formularzem */}
+      <div className="w-full bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-8 py-8">
+            {/* Lewa strona - nagłówek */}
+            <div className="flex-1">
+              <div className="text-[#5DADE2] font-medium text-sm uppercase tracking-wide mb-2">
+                MAPA EKOSYSTEMU
+              </div>
+              <h2 className="text-gray-900 font-bold text-3xl lg:text-4xl leading-tight">
+                Odkryj Polski Ekosystem<br />
+                Startupowy
+              </h2>
             </div>
-            <h2 className="mt-2 text-ui-black font-header-h2 font-[number:var(--header-h2-font-weight)] text-xl sm:text-2xl lg:text-[length:var(--header-h2-font-size)] tracking-[var(--header-h2-letter-spacing)] leading-[var(--header-h2-line-height)] [font-style:var(--header-h2-font-style)]">
-              Odkryj Polski Ekosystem
-              <br />
-              Startupowy
-            </h2>
+            
+            {/* Prawa strona - formularz */}
+            <div className="w-full lg:w-96">
+              <ContactForm />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Przycisk mobile */}
       <div className="lg:hidden w-full px-4 mb-4">
-        <Button onClick={() => setShowMobileList(!showMobileList)} className="w-full h-[48px] bg-uiblue text-white hover:bg-uiblue/90">
+        <Button 
+          onClick={() => setShowMobileList(!showMobileList)} 
+          className="w-full h-[48px] bg-[#1B7BA7] text-white hover:bg-[#1B7BA7]/90"
+        >
           {showMobileList ? "Pokaż mapę" : "Pokaż listę podmiotów"}
         </Button>
       </div>
 
       {/* MAPA + LISTA */}
-      <div className="w-full h-[400px] sm:h-[600px] lg:h-[851px] flex flex-col lg:flex-row">
+      <div className="w-full h-[400px] sm:h-[600px] lg:h-[700px] flex flex-col lg:flex-row">
         {/* Mapa */}
         <div className={cn("relative flex-1", showMobileList ? "hidden lg:block" : "block")}>
           <style>{`
@@ -418,7 +507,10 @@ const BannerSection: React.FC = () => {
             scrollWheelZoom
             preferCanvas
           >
-            <TileLayer url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
+            <TileLayer 
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
+              attribution="&copy; OpenStreetMap contributors" 
+            />
 
             <FlyToSelected coords={selectedOrg?.coords ?? null} />
             {bounds && <FitBoundsSimple bounds={bounds} mapRef={mapRef} />}
@@ -433,36 +525,53 @@ const BannerSection: React.FC = () => {
             ))}
 
             {selectedOrg && (
-              <Popup position={selectedOrg.coords} offset={[0, 16]} closeButton={false} autoPan className="leaflet-custom-popup">
-                <div className="w-[360px] rounded-2xl bg-white border border-[#b7d3e0] shadow-[0_12px_30px_rgba(15,85,117,0.18)] overflow-hidden">
-                  <div className="flex items-center gap-2 px-3 py-2 bg-uiblue-tint border-b border-[#b7d3e0]">
-                    <img src={selectedOrg.logo} alt="" className="w-6 h-5 object-contain rounded" />
-                    <div className="font-header-h4 text-ui-black flex-1">{selectedOrg.name}</div>
+              <Popup 
+                position={selectedOrg.coords} 
+                offset={[0, -20]} 
+                closeButton={false} 
+                autoPan 
+                className="leaflet-custom-popup"
+              >
+                <div className="w-80 rounded-xl bg-white border border-gray-200 shadow-lg overflow-hidden">
+                  <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 border-b border-gray-200">
+                    <img src={selectedOrg.logo} alt="" className="w-8 h-8 object-contain rounded" />
+                    <div className="font-semibold text-gray-900 flex-1">{selectedOrg.name}</div>
                     <button
                       onClick={() => setSelectedId(null)}
-                      className="w-6 h-6 inline-flex items-center justify-center rounded hover:bg-black/5"
+                      className="w-6 h-6 inline-flex items-center justify-center rounded hover:bg-gray-200"
                       aria-label="Zamknij"
                     >
                       <XIcon className="w-4 h-4" />
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 px-3 py-2">
-                    <MetaCol label="Typ organizacji" value={selectedOrg.orgType} />
-                    <MetaCol label="Branża/ścieżka" value={selectedOrg.industry} />
-                    <MetaCol label="Typ wsparcia" value={selectedOrg.supportType} />
-                    <MetaCol label="Etap rozwoju" value={selectedOrg.stage} />
-                    <MetaCol label="Lokalizacja" value={selectedOrg.location} />
-                  </div>
-
-                  <div className="px-3 pb-3">
-                    <div className="opacity-50 font-body-body-3 text-ui-black mb-1">Opis</div>
-                    <p className="font-body-body-3 text-ui-black">
-                      Przykładowy opis organizacji. Podmień na realne dane z API.
-                    </p>
-                    <button className="mt-3 w-full h-[46px] rounded-[6px] bg-[#0f5575] text-white hover:bg-[#0f5575]/90 [font-family:'Montserrat',Helvetica] font-semibold">
-                      Dane kontaktowe
-                    </button>
+                  <div className="p-4 space-y-3">
+                    <div className="text-sm text-gray-600">
+                      Wypełnij formularz, żeby zobaczyć dane kontaktowe tego podmiotu Ekosystemu.
+                    </div>
+                    
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <span className="text-gray-500">Imię i nazwisko </span>
+                        <span className="text-red-500">*</span>
+                      </div>
+                      <Input placeholder="Wpisz swoje imię i nazwisko..." className="text-sm" />
+                      
+                      <div>
+                        <span className="text-gray-500">Adres e-mail </span>
+                        <span className="text-red-500">*</span>
+                      </div>
+                      <Input placeholder="np. imie.nazwisko@gmail.com" className="text-sm" />
+                      
+                      <div className="flex items-center gap-2">
+                        <input type="checkbox" className="w-4 h-4" />
+                        <span className="text-xs text-gray-600">Przetwarzanie danych jakieś RODO? *</span>
+                      </div>
+                      
+                      <Button className="w-full mt-3 py-2 bg-[#1B7BA7] text-white text-sm">
+                        Wyślij i zobacz dane →
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </Popup>
@@ -473,59 +582,47 @@ const BannerSection: React.FC = () => {
         {/* Panel listy */}
         <aside
           className={cn(
-            "w-full lg:w-[430px] h-full bg-white shadow-[-4px_0px_10px_#0f557526]",
+            "w-full lg:w-[400px] h-full bg-white border-l border-gray-200",
             showMobileList ? "block" : "hidden lg:block"
           )}
         >
-          <header className="flex items-center gap-2.5 px-4 py-2 bg-uiblue-tint">
-            <h3 className="font-header-h4 text-ui-dark-blue">Lista podmiotów</h3>
+          <header className="px-4 py-3 bg-[#1B7BA7] text-white">
+            <h3 className="font-semibold text-lg">Lista podmiotów</h3>
           </header>
 
           {/* Filtry */}
-          <div className="flex flex-col gap-4 p-4 border-t border-[#b7d3e0] relative">
-            <div className="text-center [font-family:'Raleway',Helvetica] font-semibold text-ui-dark-blue text-xs">
+          <div className="p-4 border-b border-gray-200 space-y-3">
+            <div className="text-center text-sm font-medium text-gray-700 mb-3">
               Filtruj
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-2">
-              <DropdownChipMulti
+            <div className="grid grid-cols-1 gap-2">
+              <Dropdown
                 label="Typ organizacji"
-                value={filters.orgType ?? []}
-                options={FILTER_OPTIONS.orgType}
-                open={open === "orgType"}
-                onOpen={() => setOpen(open === "orgType" ? null : "orgType")}
-                onToggle={(opt) => setFilters((f) => toggleMulti(f, "orgType", opt))}
-                onClear={() => setFilters((f) => ({ ...f, orgType: undefined }))}
+                value={filters.category}
+                options={filterOptions.category}
+                onChange={(value) => setFilters({...filters, category: value})}
               />
-
-              <DropdownChipMulti
+              
+              <Dropdown
                 label="Branża/ścieżka"
-                value={filters.industry ?? []}
-                options={FILTER_OPTIONS.industry}
-                open={open === "industry"}
-                onOpen={() => setOpen(open === "industry" ? null : "industry")}
-                onToggle={(opt) => setFilters((f) => toggleMulti(f, "industry", opt))}
-                onClear={() => setFilters((f) => ({ ...f, industry: undefined }))}
+                value={filters.stage}
+                options={filterOptions.stage}
+                onChange={(value) => setFilters({...filters, stage: value})}
               />
-
-              <DropdownChipMulti
+              
+              <Dropdown
                 label="Typ wsparcia"
-                value={filters.supportType ?? []}
-                options={FILTER_OPTIONS.supportType}
-                open={open === "supportType"}
-                onOpen={() => setOpen(open === "supportType" ? null : "supportType")}
-                onToggle={(opt) => setFilters((f) => toggleMulti(f, "supportType", opt))}
-                onClear={() => setFilters((f) => ({ ...f, supportType: undefined }))}
+                value={filters.supportType}
+                options={filterOptions.supportType}
+                onChange={(value) => setFilters({...filters, supportType: value})}
               />
-
-              <DropdownChipMulti
+              
+              <Dropdown
                 label="Etap rozwoju"
-                value={filters.stage ?? []}
-                options={FILTER_OPTIONS.stage}
-                open={open === "stage"}
-                onOpen={() => setOpen(open === "stage" ? null : "stage")}
-                onToggle={(opt) => setFilters((f) => toggleMulti(f, "stage", opt))}
-                onClear={() => setFilters((f) => ({ ...f, stage: undefined }))}
+                value={filters.location}
+                options={filterOptions.location}
+                onChange={(value) => setFilters({...filters, location: value})}
               />
             </div>
 
@@ -534,79 +631,130 @@ const BannerSection: React.FC = () => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Wyszukaj po nazwie..."
-                className="h-[35px] px-[17px] bg-white rounded-2xl border border-[#5fa5c5] [font-family:'Raleway',Helvetica] text-[#080e1480] text-sm"
+                className="pl-10"
               />
-              <SearchIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             </div>
           </div>
 
           {/* Lista */}
-          <ScrollArea className="h-[calc(100%-200px)] lg:h-[calc(100%-140px)] w-full">
-            <div className="flex flex-col">
-              {filtered.map((org) => {
-                const isSelected = org.id === selectedId;
-                return (
-                  <Card
-                    key={org.id}
-                    onClick={() => setSelectedId(org.id)}
-                    className={cn(
-                      "w-full rounded-none border-0 border-t border-[#b7d3e0] hover:bg-uiblue-tint cursor-pointer",
-                      isSelected ? "bg-uiblue-tint" : "bg-white"
-                    )}
-                  >
-                    <CardContent className="flex flex-col gap-1 px-4 py-2">
-                      <div className="flex items-center gap-2">
-                        <img
-                          className="w-16 sm:w-20 h-6 sm:h-8 object-contain"
-                          alt={`${org.name} logo`}
-                          src={org.logo}
-                        />
-                        <div
+          <ScrollArea className="h-[calc(100%-200px)]">
+            <div className="p-4">
+              {/* Startupy */}
+              {groupedOrgs.startups.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    Startupy ({groupedOrgs.startups.length})
+                  </h4>
+                  <div className="space-y-2">
+                    {groupedOrgs.startups.map((org) => {
+                      const isSelected = org.id === selectedId;
+                      return (
+                        <Card
+                          key={org.id}
+                          onClick={() => setSelectedId(org.id)}
                           className={cn(
-                            "text-xs sm:text-sm flex-1 [font-family:'Montserrat',Helvetica] font-semibold",
-                            isSelected ? "text-uiblue" : "text-ui-black"
+                            "cursor-pointer transition-colors hover:bg-gray-50 border-l-4",
+                            isSelected ? "bg-blue-50 border-l-[#1B7BA7]" : "border-l-transparent"
                           )}
                         >
-                          {org.name}
-                        </div>
-                        {isSelected ? (
-                          <CheckIcon className="w-4 h-4" />
-                        ) : (
-                          <ArrowRightIcon className="w-4 h-4" />
-                        )}
-                      </div>
+                          <CardContent className="p-3">
+                            <div className="flex items-center gap-3 mb-2">
+                              <img
+                                className="w-8 h-8 object-contain"
+                                alt={`${org.name} logo`}
+                                src={org.logo}
+                              />
+                              <div className="flex-1">
+                                <div className="font-medium text-gray-900">{org.name}</div>
+                                <div className="text-xs text-gray-500">{org.description}</div>
+                              </div>
+                              {isSelected ? (
+                                <CheckIcon className="w-4 h-4 text-[#1B7BA7]" />
+                              ) : (
+                                <ArrowRightIcon className="w-4 h-4 text-gray-400" />
+                              )}
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                              <div>
+                                <span className="text-gray-400">Branża</span>
+                                <div>MedTech</div>
+                              </div>
+                              <div>
+                                <span className="text-gray-400">Typ wsparcia</span>
+                                <div>{org.supportTypes}</div>
+                              </div>
+                              <div>
+                                <span className="text-gray-400">Etap rozwoju</span>
+                                <div>{org.stage}</div>
+                              </div>
+                              <div>
+                                <span className="text-gray-400">Lokalizacja</span>
+                                <div>{org.location}</div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
-                      <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-end gap-1 sm:gap-[2px_12px]">
-                        <Meta label="Typ" value={org.orgType} />
-                        <Meta label="Branża" value={org.industry} />
-                        <Meta label="Wsparcie" value={org.supportType} />
-                        <Meta label="Etap" value={org.stage} />
-                        <Meta label="Lokalizacja" value={org.location} />
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+              {/* Firmy */}
+              {groupedOrgs.companies.length > 0 && (
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+                    Firmy ({groupedOrgs.companies.length})
+                  </h4>
+                  <div className="space-y-2">
+                    {groupedOrgs.companies.map((org) => {
+                      const isSelected = org.id === selectedId;
+                      return (
+                        <Card
+                          key={org.id}
+                          onClick={() => setSelectedId(org.id)}
+                          className={cn(
+                            "cursor-pointer transition-colors hover:bg-gray-50 border-l-4",
+                            isSelected ? "bg-blue-50 border-l-[#1B7BA7]" : "border-l-transparent"
+                          )}
+                        >
+                          <CardContent className="p-3">
+                            <div className="flex items-center gap-3 mb-2">
+                              <img
+                                className="w-8 h-8 object-contain"
+                                alt={`${org.name} logo`}
+                                src={org.logo}
+                              />
+                              <div className="flex-1">
+                                <div className="font-medium text-gray-900">{org.name}</div>
+                                <div className="text-xs text-gray-500">{org.description}</div>
+                              </div>
+                              {isSelected ? (
+                                <CheckIcon className="w-4 h-4 text-[#1B7BA7]" />
+                              ) : (
+                                <ArrowRightIcon className="w-4 h-4 text-gray-400" />
+                              )}
+                            </div>
+                            <div className="text-xs text-gray-600 space-y-1">
+                              <div>{org.stage} • {org.supportTypes}</div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </ScrollArea>
         </aside>
       </div>
-
-      {/* Blok dodat. – dokładne odwzorowanie figma panelu po prawej */}
-      <style>{`
-        /* Wyciąg z CSS z Figmy dla panelu listy – trzymamy w jednym pliku */
-        .shadow-card-shadow { box-shadow: 0 12px 30px rgba(15, 85, 117, 0.18) }
-        .text-ui-black { color:#080E14 }
-        .text-ui-dark-blue { color:#0F5575 }
-        .text-uiblue { color:#4EBFEE }
-        .bg-uiblue-tint { background:#F5FAFD }
-        .bg-uiblue { background:#0F5575 } /* przycisk */
-        /* panel z Figmy:
-           width: 430px; separator/border #B8D4E0; cień -4px 0 10px rgba(15,85,117,.15) */
-      `}</style>
     </section>
   );
 };
 
 export default BannerSection;
-export { BannerSection }
+export { BannerSection };
