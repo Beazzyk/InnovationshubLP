@@ -52,15 +52,13 @@ const Card: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...p 
   <div {...p} className={cn("bg-white border border-gray-200 rounded-lg", className)} />
 );
 
-const CardContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
-  className,
-  ...p
-}) => <div {...p} className={cn("p-4", className)} />;
+const CardContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...p }) => (
+  <div {...p} className={cn("p-4", className)} />
+);
 
-const ScrollArea: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
-  className,
-  ...p
-}) => <div {...p} className={cn("overflow-y-auto", className)} />;
+const ScrollArea: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...p }) => (
+  <div {...p} className={cn("overflow-y-auto", className)} />
+);
 
 /* ====== typy ====== */
 type Org = {
@@ -84,7 +82,7 @@ type Filters = {
 
 /* ====== DEMO dane ====== */
 const ALL_ORGS: Org[] = [
-  // Startupy (mniej podmiotów)
+  // Startupy
   {
     id: 1,
     name: "Polska Nagroda Innowacyjności 2021",
@@ -94,7 +92,7 @@ const ALL_ORGS: Org[] = [
     supportTypes: "Inkubator",
     location: "Warszawa",
     coords: [52.2297, 21.0122],
-    description: "Startup B"
+    description: "Startup B",
   },
   {
     id: 2,
@@ -105,7 +103,7 @@ const ALL_ORGS: Org[] = [
     supportTypes: "Finansowanie",
     location: "Warszawa",
     coords: [52.2297, 21.0122],
-    description: "Startup B"
+    description: "Startup B",
   },
   {
     id: 3,
@@ -116,7 +114,7 @@ const ALL_ORGS: Org[] = [
     supportTypes: "Akceleracja",
     location: "Warszawa",
     coords: [52.2297, 21.0122],
-    description: "Startup B"
+    description: "Startup B",
   },
   {
     id: 4,
@@ -127,296 +125,36 @@ const ALL_ORGS: Org[] = [
     supportTypes: "Inkubacja",
     location: "Warszawa",
     coords: [52.2297, 21.0122],
-    description: "Startup B"
+    description: "Startup B",
   },
 
-  // Firmy (Partner Korporacyjny - więcej podmiotów)
-  {
-    id: 5,
-    name: "Orange Polska",
-    logo: "/rectangle-4174-4.png",
-    category: "Firma",
-    stage: "Pre seed, Seed +2",
-    supportTypes: "8 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 6,
-    name: "Ciech Ventures",
-    logo: "/rectangle-4176-1.png",
-    category: "Firma",
-    stage: "Seed +2",
-    supportTypes: "5 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 7,
-    name: "HR Marketplace (eRecruiter)",
-    logo: "/rectangle-4176-2.png",
-    category: "Firma",
-    stage: "Seed +2",
-    supportTypes: "8 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 8,
-    name: "Future Mind",
-    logo: "/rectangle-4176-3.png",
-    category: "Firma",
-    stage: "Seed +3",
-    supportTypes: "7 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 9,
-    name: "BNP Paribas Polska",
-    logo: "/rectangle-4176-4.png",
-    category: "Firma",
-    stage: "Seed, Early stage",
-    supportTypes: "6 typów wsparcia",
-    location: "Kraków",
-    coords: [50.0647, 19.945],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 10,
-    name: "PZU",
-    logo: "/rectangle-4174-4.png",
-    category: "Firma",
-    stage: "Seed, Early stage",
-    supportTypes: "8 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 11,
-    name: "Transcom",
-    logo: "/rectangle-4176-1.png",
-    category: "Firma",
-    stage: "Seed, Early stage",
-    supportTypes: "5 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 12,
-    name: "Maspex",
-    logo: "/rectangle-4176-2.png",
-    category: "Firma",
-    stage: "Seed, Early stage",
-    supportTypes: "6 typów wsparcia",
-    location: "Kraków",
-    coords: [50.0647, 19.945],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 13,
-    name: "Veolia",
-    logo: "/rectangle-4176-3.png",
-    category: "Firma",
-    stage: "Seed +2",
-    supportTypes: "7 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 14,
-    name: "Tauron Polska Energia",
-    logo: "/rectangle-4176-4.png",
-    category: "Firma",
-    stage: "Seed, Early stage",
-    supportTypes: "6 typów wsparcia",
-    location: "Katowice",
-    coords: [50.2649, 19.0238],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 15,
-    name: "ORLEN Skylight Accelerator",
-    logo: "/rectangle-4174-4.png",
-    category: "Firma",
-    stage: "Idea stage +1",
-    supportTypes: "8 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 16,
-    name: "Ringier Axel Springer",
-    logo: "/rectangle-4176-1.png",
-    category: "Firma",
-    stage: "Seed +2",
-    supportTypes: "7 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 17,
-    name: "Grupa Azoty",
-    logo: "/rectangle-4176-2.png",
-    category: "Firma",
-    stage: "Seed, Early stage",
-    supportTypes: "6 typów wsparcia",
-    location: "Tarnów",
-    coords: [50.0135, 20.9859],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 18,
-    name: "PGE Ventures",
-    logo: "/rectangle-4176-3.png",
-    category: "Firma",
-    stage: "Seed +2",
-    supportTypes: "6 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 19,
-    name: "Instytut Matki i Dziecka",
-    logo: "/rectangle-4176-4.png",
-    category: "Firma",
-    stage: "Early stage",
-    supportTypes: "7 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 20,
-    name: "InPost",
-    logo: "/rectangle-4174-4.png",
-    category: "Firma",
-    stage: "Seed, Early stage",
-    supportTypes: "5 typów wsparcia",
-    location: "Kraków",
-    coords: [50.0647, 19.945],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 21,
-    name: "ORLEN VS",
-    logo: "/rectangle-4176-1.png",
-    category: "Firma",
-    stage: "Seed +3",
-    supportTypes: "6 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 22,
-    name: "Saint-Gobain",
-    logo: "/rectangle-4176-2.png",
-    category: "Firma",
-    stage: "Seed +3",
-    supportTypes: "8 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 23,
-    name: "Totalizator Sportowy",
-    logo: "/rectangle-4176-3.png",
-    category: "Firma",
-    stage: "Pre-seed, Seed",
-    supportTypes: "7 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 24,
-    name: "Bank Pekao S.A.",
-    logo: "/rectangle-4176-4.png",
-    category: "Firma",
-    stage: "Seed, Early stage",
-    supportTypes: "8 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 25,
-    name: "Neuca",
-    logo: "/rectangle-4174-4.png",
-    category: "Firma",
-    stage: "Seed, Early stage",
-    supportTypes: "6 typów wsparcia",
-    location: "Poznań",
-    coords: [52.4064, 16.9252],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 26,
-    name: "Rossmann",
-    logo: "/rectangle-4176-1.png",
-    category: "Firma",
-    stage: "Early stage",
-    supportTypes: "5 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 27,
-    name: "Żabka",
-    logo: "/rectangle-4176-2.png",
-    category: "Firma",
-    stage: "Pre-seed +2",
-    supportTypes: "7 typów wsparcia",
-    location: "Poznań",
-    coords: [52.4064, 16.9252],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 28,
-    name: "Citi Handlowy",
-    logo: "/rectangle-4176-3.png",
-    category: "Firma",
-    stage: "Seed +3",
-    supportTypes: "8 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 29,
-    name: "Novartis",
-    logo: "/rectangle-4176-4.png",
-    category: "Firma",
-    stage: "Seed +3",
-    supportTypes: "9 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  },
-  {
-    id: 30,
-    name: "Astra Zeneca",
-    logo: "/rectangle-4174-4.png",
-    category: "Firma",
-    stage: "Seed +3",
-    supportTypes: "9 typów wsparcia",
-    location: "Warszawa",
-    coords: [52.2297, 21.0122],
-    description: "Partner Korporacyjny"
-  }
+  // Firmy (Partner Korporacyjny)
+  { id: 5, name: "Orange Polska", logo: "/rectangle-4174-4.png", category: "Firma", stage: "Pre seed, Seed +2", supportTypes: "8 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 6, name: "Ciech Ventures", logo: "/rectangle-4176-1.png", category: "Firma", stage: "Seed +2", supportTypes: "5 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 7, name: "HR Marketplace (eRecruiter)", logo: "/rectangle-4176-2.png", category: "Firma", stage: "Seed +2", supportTypes: "8 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 8, name: "Future Mind", logo: "/rectangle-4176-3.png", category: "Firma", stage: "Seed +3", supportTypes: "7 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 9, name: "BNP Paribas Polska", logo: "/rectangle-4176-4.png", category: "Firma", stage: "Seed, Early stage", supportTypes: "6 typów wsparcia", location: "Kraków", coords: [50.0647, 19.945], description: "Partner Korporacyjny" },
+  { id: 10, name: "PZU", logo: "/rectangle-4174-4.png", category: "Firma", stage: "Seed, Early stage", supportTypes: "8 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 11, name: "Transcom", logo: "/rectangle-4176-1.png", category: "Firma", stage: "Seed, Early stage", supportTypes: "5 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 12, name: "Maspex", logo: "/rectangle-4176-2.png", category: "Firma", stage: "Seed, Early stage", supportTypes: "6 typów wsparcia", location: "Kraków", coords: [50.0647, 19.945], description: "Partner Korporacyjny" },
+  { id: 13, name: "Veolia", logo: "/rectangle-4176-3.png", category: "Firma", stage: "Seed +2", supportTypes: "7 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 14, name: "Tauron Polska Energia", logo: "/rectangle-4176-4.png", category: "Firma", stage: "Seed, Early stage", supportTypes: "6 typów wsparcia", location: "Katowice", coords: [50.2649, 19.0238], description: "Partner Korporacyjny" },
+  { id: 15, name: "ORLEN Skylight Accelerator", logo: "/rectangle-4174-4.png", category: "Firma", stage: "Idea stage +1", supportTypes: "8 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 16, name: "Ringier Axel Springer", logo: "/rectangle-4176-1.png", category: "Firma", stage: "Seed +2", supportTypes: "7 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 17, name: "Grupa Azoty", logo: "/rectangle-4176-2.png", category: "Firma", stage: "Seed, Early stage", supportTypes: "6 typów wsparcia", location: "Tarnów", coords: [50.0135, 20.9859], description: "Partner Korporacyjny" },
+  { id: 18, name: "PGE Ventures", logo: "/rectangle-4176-3.png", category: "Firma", stage: "Seed +2", supportTypes: "6 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 19, name: "Instytut Matki i Dziecka", logo: "/rectangle-4176-4.png", category: "Firma", stage: "Early stage", supportTypes: "7 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 20, name: "InPost", logo: "/rectangle-4174-4.png", category: "Firma", stage: "Seed, Early stage", supportTypes: "5 typów wsparcia", location: "Kraków", coords: [50.0647, 19.945], description: "Partner Korporacyjny" },
+  { id: 21, name: "ORLEN VS", logo: "/rectangle-4176-1.png", category: "Firma", stage: "Seed +3", supportTypes: "6 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 22, name: "Saint-Gobain", logo: "/rectangle-4176-2.png", category: "Firma", stage: "Seed +3", supportTypes: "8 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 23, name: "Totalizator Sportowy", logo: "/rectangle-4176-3.png", category: "Firma", stage: "Pre-seed, Seed", supportTypes: "7 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 24, name: "Bank Pekao S.A.", logo: "/rectangle-4176-4.png", category: "Firma", stage: "Seed, Early stage", supportTypes: "8 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 25, name: "Neuca", logo: "/rectangle-4174-4.png", category: "Firma", stage: "Seed, Early stage", supportTypes: "6 typów wsparcia", location: "Poznań", coords: [52.4064, 16.9252], description: "Partner Korporacyjny" },
+  { id: 26, name: "Rossmann", logo: "/rectangle-4176-1.png", category: "Firma", stage: "Early stage", supportTypes: "5 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 27, name: "Żabka", logo: "/rectangle-4176-2.png", category: "Firma", stage: "Pre-seed +2", supportTypes: "7 typów wsparcia", location: "Poznań", coords: [52.4064, 16.9252], description: "Partner Korporacyjny" },
+  { id: 28, name: "Citi Handlowy", logo: "/rectangle-4176-3.png", category: "Firma", stage: "Seed +3", supportTypes: "8 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 29, name: "Novartis", logo: "/rectangle-4176-4.png", category: "Firma", stage: "Seed +3", supportTypes: "9 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
+  { id: 30, name: "Astra Zeneca", logo: "/rectangle-4174-4.png", category: "Firma", stage: "Seed +3", supportTypes: "9 typów wsparcia", location: "Warszawa", coords: [52.2297, 21.0122], description: "Partner Korporacyjny" },
 ];
 
 /* ====== marker z logiem ====== */
@@ -481,7 +219,6 @@ const PillDropdown: React.FC<{
           "text-[#0b1f2d] border border-transparent hover:opacity-90"
         )}
       >
-        {/* licznik po lewej – 1:1 */}
         {hasValue ? (
           <span className="inline-flex w-4 h-4 items-center justify-center rounded-full bg-[#114b6a] text-white text-[10px]">
             1
@@ -539,7 +276,7 @@ const BannerSection: React.FC = () => {
     category: "",
     stage: "",
     supportType: "",
-    location: ""
+    location: "",
   });
 
   const selectedOrg = useMemo(
@@ -554,7 +291,8 @@ const BannerSection: React.FC = () => {
       const byQ = !q || o.name.toLowerCase().includes(q);
       const byCategory = !filters.category || o.category === filters.category;
       const byStage = !filters.stage || o.stage.includes(filters.stage);
-      const bySupport = !filters.supportType || o.supportTypes.includes(filters.supportType);
+      const bySupport =
+        !filters.supportType || o.supportTypes.includes(filters.supportType);
       const byLocation = !filters.location || o.location === filters.location;
       return byQ && byCategory && byStage && bySupport && byLocation;
     });
@@ -579,7 +317,7 @@ const BannerSection: React.FC = () => {
     category: ["Startup", "Firma"],
     stage: ["Pre-seed", "Seed", "Early stage", "Startup B"],
     supportType: ["Inkubator", "Akceleracja", "Finansowanie"],
-    location: ["Warszawa", "Kraków", "Poznań", "Gdańsk"]
+    location: ["Warszawa", "Kraków", "Poznań", "Gdańsk"],
   };
 
   return (
@@ -704,7 +442,9 @@ const BannerSection: React.FC = () => {
 
                       <div className="flex items-center gap-2">
                         <input type="checkbox" className="w-4 h-4" />
-                        <span className="text-xs text-gray-600">Przetwarzanie danych jakieś RODO? *</span>
+                        <span className="text-xs text-gray-600">
+                          Przetwarzanie danych jakieś RODO? *
+                        </span>
                       </div>
 
                       <Button className="w-full mt-3 py-2 bg-[#1B7BA7] text-white text-sm">
@@ -733,7 +473,7 @@ const BannerSection: React.FC = () => {
           <div className="p-4 border-b border-gray-200 space-y-3">
             <div className="text-center font-medium text-[#113a52] text-xs">Filtruj</div>
 
-            {/* 2x2 siatka pigułek – 1:1 symetrycznie */}
+            {/* 2x2 siatka pigułek – 1:1 */}
             <div className="grid grid-cols-2 gap-3">
               <PillDropdown
                 label="Typ organizacji"
@@ -761,7 +501,7 @@ const BannerSection: React.FC = () => {
               />
             </div>
 
-            {/* Search 1:1 wygląd */}
+            {/* Search – 1:1 */}
             <div className="relative">
               <Input
                 value={query}
@@ -780,7 +520,7 @@ const BannerSection: React.FC = () => {
               {groupedOrgs.startups.length > 0 && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    <span className="w-2 h-2 bg-green-500 rounded-full" />
                     Startupy ({groupedOrgs.startups.length})
                   </h4>
                   <div className="space-y-2">
@@ -842,7 +582,7 @@ const BannerSection: React.FC = () => {
               {groupedOrgs.companies.length > 0 && (
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+                    <span className="w-2 h-2 bg-orange-500 rounded-full" />
                     Firmy ({groupedOrgs.companies.length})
                   </h4>
                   <div className="space-y-2">
@@ -858,7 +598,7 @@ const BannerSection: React.FC = () => {
                           )}
                         >
                           <CardContent className="p-3">
-                            <div className="flex items-center gap-3 mb-2">
+                            <div className="flex items-center gap-3">
                               <img
                                 className="w-8 h-8 object-contain"
                                 alt={`${org.name} logo`}
